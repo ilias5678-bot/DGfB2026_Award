@@ -23,7 +23,6 @@
             background: var(--bg); margin: 0; padding: 0; color: var(--text); line-height: 1.4;
         }
 
-        /* Container für alles, was oben fixiert bleiben soll */
         .sticky-top-area {
             position: sticky;
             top: 0;
@@ -46,10 +45,8 @@
             font-size: 16px; text-align: center; background: #f9f9f9;
         }
 
-        /* Fixierte Legende beim Scrollen */
         .ranking-legend {
             background: #ffffff; 
-            margin: 0; /* Margin auf 0, damit es bündig klebt */
             padding: 10px; 
             font-size: 0.75rem; 
             border-bottom: 1px solid #ddd; 
@@ -136,6 +133,14 @@
         }
 
         #adminArea { padding: 15px; background: white; margin: 15px; border-radius: 12px; display: none; }
+        #adminTable table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+        #adminTable th, #adminTable td { border: 1px solid #eee; padding: 8px; text-align: center; }
+        #adminTable th { background: #f8f9fa; }
+        
+        .btn-csv {
+            background: #e67e22; color: white; border: none; padding: 10px 15px; 
+            border-radius: 6px; font-weight: bold; margin-bottom: 15px; cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -163,7 +168,8 @@
 <button onclick="toggleAdmin()" style="width:100%; padding:20px; opacity:0.05; background:none; border:none;">Admin</button>
 
 <div id="adminArea">
-    <h3>Ranking</h3>
+    <h3>Ranking Übersicht</h3>
+    <button class="btn-csv" onclick="exportToCSV()">Als CSV exportieren</button>
     <div id="adminTable"></div>
 </div>
 
@@ -259,7 +265,6 @@
         document.querySelectorAll('.poster-item').forEach(el => el.classList.remove('active'));
         if (!isActive) {
             item.classList.add('active');
-            // Ein wenig Offset beim Scrollen einberechnen, damit das aktive Poster unter der fixierten Legende landet
             const yOffset = -180; 
             const y = item.getBoundingClientRect().top + window.pageYOffset + yOffset;
             window.scrollTo({top: y, behavior: 'smooth'});
@@ -290,26 +295,78 @@
     }
 
     function finalCloudUpload() { autoSave(); alert("Daten synchronisiert!"); }
-    function toggleAdmin() { if(prompt("Passwort:") === "admin123") { document.getElementById('adminArea').style.display = 'block'; loadAdminTable(); } }
+    
+    function toggleAdmin() { 
+        if(prompt("Passwort:") === "admin123") { 
+            document.getElementById('adminArea').style.display = 'block'; 
+            loadAdminTable(); 
+        } 
+    }
 
     function loadAdminTable() {
         db.ref('results').on('value', snap => {
             const results = snap.val();
-            let reportData = [];
+            let stats = [];
+
             titles.forEach((t, i) => {
                 let sum = 0, count = 0;
                 for(let uid in results) {
                     if(results[uid].ratings && results[uid].ratings[i]) {
-                        let pSum = 0; for(let c=0; c<3; c++) pSum += results[uid].ratings[i][c];
-                        sum += (pSum / 3); count++;
+                        let pSum = 0;
+                        for(let c=0; c<3; c++) pSum += results[uid].ratings[i][c];
+                        sum += (pSum / 3);
+                        count++;
                     }
                 }
-                reportData.push({ title: t, average: count > 0 ? sum/count : 0 });
+                stats.push({ title: t, avg: count > 0 ? (sum / count) : 0, votes: count });
             });
-            reportData.sort((a, b) => b.average - a.average);
-            let html = '<table style="width:100%; border-collapse:collapse;"><tr><th>#</th><th>Poster</th><th>Ø</th></tr>';
-            reportData.forEach((d, idx) => { html += `<tr><td>${idx+1}</td><td>${d.title}</td><td>${d.average.toFixed(2)}</td></tr>`; });
-            document.getElementById('adminTable').innerHTML = html + '</table>';
+
+            stats.sort((a, b) => b.avg - a.avg || b.votes - a.votes);
+
+            let html = '<table><tr><th>Rang</th><th>Poster</th><th>Ø (3 Krit.)</th><th>Votes</th></tr>';
+            stats.forEach((s, index) => {
+                const warningStyle = s.votes < 3 ? 'style="color: #e74c3c; font-weight:bold;"' : '';
+                html += `<tr>
+                    <td>${index + 1}</td>
+                    <td style="text-align:left">${s.title}</td>
+                    <td><b>${s.avg > 0 ? s.avg.toFixed(2) : '-'}</b></td>
+                    <td ${warningStyle}>${s.votes}</td>
+                </tr>`;
+            });
+            document.getElementById('adminTable').innerHTML = html + '</table><p><small>* Rote Votes = Weniger als 3 Bewertungen</small></p>';
+        });
+    }
+
+    function exportToCSV() {
+        db.ref('results').once('value', snap => {
+            const results = snap.val();
+            // Header mit Votes ergänzt
+            let csv = "\ufeffJuror;Poster;Anzahl Votes (Poster);Mittelwert (3 Krit.)\n";
+            
+            // Erst die Statistiken pro Poster berechnen für die Spalte "Anzahl Votes"
+            let posterVotes = {};
+            titles.forEach((t, i) => {
+                let count = 0;
+                for(let uid in results) {
+                    if(results[uid].ratings && results[uid].ratings[i]) count++;
+                }
+                posterVotes[i] = count;
+            });
+
+            for(let uid in results) {
+                const r = results[uid].ratings;
+                const juror = results[uid].juror_name;
+                for(let pIdx in r) {
+                    let sum = 0; 
+                    for(let c=0; c<3; c++) sum += r[pIdx][c];
+                    csv += `"${juror}";"${titles[pIdx]}";${posterVotes[pIdx]};${(sum/3).toFixed(2)}\n`;
+                }
+            }
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "DGfB2026_Ranking_Detail.csv";
+            link.click();
         });
     }
 </script>
