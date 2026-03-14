@@ -19,14 +19,14 @@
         .poster-item.active .poster-content { display: block; }
         .crit-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         select { padding: 8px; border-radius: 5px; border: 1px solid #ccc; width: 75px; font-size: 1rem; background: #fff; }
-        select:invalid { color: #999; border: 1px solid var(--danger); }
         .btn-save-local { background: var(--accent); color: white; border: none; padding: 12px; border-radius: 6px; width: 100%; cursor: pointer; font-weight: bold; }
         .btn-cloud { background: var(--success); color: white; border: none; padding: 20px; border-radius: 10px; width: 100%; font-size: 1.2rem; font-weight: bold; margin-top: 30px; cursor: pointer; }
         .status-dot { height: 12px; width: 12px; background-color: #ddd; border-radius: 50%; }
         .done .status-dot { background-color: var(--success); }
         #adminArea { display:none; margin-top: 40px; background: white; padding: 15px; border-radius: 8px; border: 2px solid var(--primary); }
-        table { width: 100%; border-collapse: collapse; font-size: 0.7rem; }
-        th, td { border: 1px solid #ddd; padding: 4px; text-align: center; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.7rem; margin-bottom: 20px; }
+        th, td { border: 1px solid #ddd; padding: 6px; text-align: center; }
+        th { background: #f2f2f2; }
         .btn-export { background: #e67e22; color: white; border: none; padding: 10px; border-radius: 5px; margin-bottom: 10px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
@@ -34,7 +34,8 @@
 
 <div class="header">
     <h2>DGfB 2026 Poster Bewertung</h2>
-    <input type="text" id="jurorName" placeholder="Name des Juroren" required style="width:100%; padding:12px; border-radius:8px; border:1px solid #ccc; box-sizing: border-box;">
+    <input type="text" id="jurorName" placeholder="Vorname Nachname" required style="width:100%; padding:12px; border-radius:8px; border:1px solid #ccc; box-sizing: border-box;">
+    <p id="jurorUIDDisplay" style="font-size: 0.7rem; color: #7f8c8d; margin-top: 5px;"></p>
 </div>
 
 <div id="mainContainer"></div>
@@ -42,26 +43,28 @@
 <button onclick="toggleAdmin()" style="margin-top:60px; opacity:0.1; border:none; background:none; width:100%;">Admin</button>
 
 <div id="adminArea">
-    <h3>Detaillierte Auswertung</h3>
-    <button class="btn-export" onclick="exportToCSV()">CSV herunterladen</button>
+    <h3>Detaillierte Auswertung & Rohdaten</h3>
+    <button class="btn-export" onclick="exportToCSV()">Detaillierte CSV herunterladen</button>
     <div id="adminTable" style="overflow-x: auto;">Lade Daten...</div>
 </div>
 
 <script>
-    // --- FIREBASE KONFIGURATION ---
+    // --- FIREBASE KONFIGURATION (Bitte ausfüllen!) ---
     const firebaseConfig = {
-  apiKey: "AIzaSyAMk8sqJiTbOB1LKNZJ4peKEBoyz_2sohM",
-  authDomain: "dgfb-2026.firebaseapp.com",
-  databaseURL: "https://dgfb-2026-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "dgfb-2026",
-  storageBucket: "dgfb-2026.firebasestorage.app",
-  messagingSenderId: "195774055960",
-  appId: "1:195774055960:web:b83f48b55f8ffd5266a56d",
-  measurementId: "G-0CS3ZW0ZDV"
-};
+        apiKey: "DEIN_API_KEY",
+        authDomain: "DEIN_PROJEKT.firebaseapp.com",
+        databaseURL: "https://DEIN_PROJEKT.firebaseio.com",
+        projectId: "DEIN_PROJEKT",
+        storageBucket: "DEIN_PROJEKT.appspot.com",
+        appId: "DEINE_APP_ID"
+    };
     
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
+
+    // UID generieren (bleibt für die Session gleich)
+    const jurorUID = "J-" + Math.random().toString(36).substr(2, 9).toUpperCase();
+    document.getElementById('jurorUIDDisplay').innerText = "Deine Jury-ID: " + jurorUID;
 
     const titles = [
        "109 Biomechanische Testung von Kabelklammerimplantaten (Vorderer Beckenring)",
@@ -95,7 +98,7 @@
         "270 Electromechanical Computational Model of the Human Stomach"
     ];
 
-    const criteria = ["Inhalt", "Gestaltung", "Struktur"];
+    const criteria = ["Inhalt", "Gestaltung", "Struktur", "Gesamt"];
 
     const container = document.getElementById('mainContainer');
     titles.forEach((title, pIdx) => {
@@ -124,46 +127,48 @@
     }
 
     function saveLocal(idx) {
-        // Prüfen ob alle N/A weg sind für dieses Poster
         const selects = document.querySelectorAll(`.score-sel[data-p="${idx}"]`);
         let allFilled = true;
         selects.forEach(s => { if(s.value === "") allFilled = false; });
 
         if(!allFilled) {
-            alert("Bitte alle Kriterien für dieses Poster bewerten (kein N/A)! Philipp sagt: Nur Mut zur Note.");
+            alert("Bitte alle Kriterien bewerten!");
             return;
         }
-
         document.getElementById(`poster-item-${idx}`).classList.add('done');
         document.getElementById(`poster-item-${idx}`).classList.remove('active');
     }
 
     function finalCloudUpload() {
         const name = document.getElementById('jurorName').value.trim();
-        if(!name) return alert("Bitte Namen eingeben!");
-
-        // Check ob mindestens ein Poster fertig ist
+        if(!name) return alert("Bitte Vor- und Nachnamen eingeben!");
         const doneCount = document.querySelectorAll('.poster-item.done').length;
-        if(doneCount === 0) return alert("Du hast noch kein Poster fertig bewertet (grüner Haken fehlt)!");
+        if(doneCount === 0) return alert("Keine fertigen Bewertungen vorhanden!");
 
-        if(!confirm(`Möchtest du die Bewertungen für ${doneCount} Poster jetzt final absenden?`)) return;
-
-        const data = {};
+        const ratings = {};
         document.querySelectorAll('.poster-item.done').forEach(item => {
             const pIdx = item.id.replace('poster-item-', '');
-            data[pIdx] = {};
+            ratings[pIdx] = {};
             item.querySelectorAll('.score-sel').forEach(s => {
-                data[pIdx][s.dataset.c] = parseInt(s.value);
+                ratings[pIdx][s.dataset.c] = parseInt(s.value);
             });
         });
 
-        db.ref('results/' + name.replace(/[.#$\[\]]/g, "_")).set(data)
-            .then(() => alert("Erfolgreich in der Cloud gespeichert!"))
+        // Paket inkl. Juror Info schnüren
+        const payload = {
+            juror_name: name,
+            juror_uid: jurorUID,
+            timestamp: new Date().toISOString(),
+            ratings: ratings
+        };
+
+        db.ref('results/' + jurorUID).set(payload)
+            .then(() => alert("Daten erfolgreich gesendet! ID: " + jurorUID))
             .catch(e => alert("Fehler: " + e));
     }
 
     function toggleAdmin() {
-        if(prompt("Passwort:") === "admin123") {
+        if(prompt("Admin-Passwort:") === "admin123") {
             document.getElementById('adminArea').style.display = 'block';
             loadAdminTable();
         }
@@ -172,43 +177,58 @@
     function loadAdminTable() {
         db.ref('results').on('value', snap => {
             const results = snap.val();
-            let html = '<table><tr><th>Poster</th><th>Inhalt</th><th>Gest.</th><th>Struk.</th><th>Präs.</th><th>Ges.</th><th>Votes</th></tr>';
+            let html = '<h4>Übersicht nach Poster (Durchschnitt)</h4>';
+            html += '<table><tr><th>Poster</th><th>Schnitt</th><th>Votes</th></tr>';
+            
             titles.forEach((t, i) => {
-                let sums = [0,0,0,0,0], count = 0;
-                for(let j in results) {
-                    if(results[j] && results[j][i]) {
-                        for(let c=0; c<5; c++) sums[c] += results[j][i][c];
+                let sum = 0, count = 0;
+                for(let uid in results) {
+                    if(results[uid].ratings && results[uid].ratings[i]) {
+                        let pSum = 0;
+                        for(let c=0; c<5; c++) pSum += results[uid].ratings[i][c];
+                        sum += (pSum / 5);
                         count++;
                     }
                 }
-                html += `<tr><td style="text-align:left">${t.substring(0,12)}...</td>`;
-                sums.forEach(s => html += `<td>${count > 0 ? (s/count).toFixed(1) : '-'}</td>`);
-                html += `<td>${count}</td></tr>`;
+                const avg = count > 0 ? (sum / count).toFixed(2) : '-';
+                html += `<tr><td style="text-align:left">${t}</td><td><b>${avg}</b></td><td>${count}</td></tr>`;
             });
-            document.getElementById('adminTable').innerHTML = html + '</table>';
+            html += '</table>';
+            
+            html += '<h4>Einzelne Jury-Stimmen</h4>';
+            html += '<table><tr><th>Juror</th><th>UID</th><th>Anzahl bewertet</th></tr>';
+            for(let uid in results) {
+                const count = Object.keys(results[uid].ratings || {}).length;
+                html += `<tr><td>${results[uid].juror_name}</td><td>${results[uid].juror_uid}</td><td>${count}</td></tr>`;
+            }
+            html += '</table>';
+
+            document.getElementById('adminTable').innerHTML = html;
         });
     }
 
     function exportToCSV() {
         db.ref('results').once('value', snap => {
-            const data = snap.val();
-            let csv = "Poster;Inhalt;Gestaltung;Struktur;jurorName;Anzahl_Votes\n";
-            titles.forEach((t, i) => {
-                let sums = [0,0,0,0,0], count = 0;
-                for(let j in data) {
-                    if(data[j] && data[j][i]) {
-                        for(let c=0; c<5; c++) sums[c] += data[j][i][c];
-                        count++;
+            const results = snap.val();
+            let csv = "\ufeffJuror_Name;Juror_UID;Poster_Titel;Inhalt;Gestaltung;Struktur;Gesamt\n";
+            
+            for(let uid in results) {
+                const jurName = results[uid].juror_name;
+                const jurUid = results[uid].juror_uid;
+                const ratings = results[uid].ratings;
+                
+                for(let pIdx in ratings) {
+                    let line = `"${jurName}";"${jurUid}";"${titles[pIdx]}";`;
+                    for(let c=0; c<5; c++) {
+                        line += `${ratings[pIdx][c]};`;
                     }
+                    csv += line + "\n";
                 }
-                let line = `"${t}";`;
-                sums.forEach(s => line += `${count > 0 ? (s/count).toFixed(2).replace('.',',') : 0};`);
-                csv += line + count + "\n";
-            });
-            const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
+            }
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
-            link.setAttribute("download", "poster_auswertung.csv");
+            link.setAttribute("download", "Jury_Detail_Auswertung.csv");
             link.click();
         });
     }
