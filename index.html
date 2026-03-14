@@ -12,63 +12,79 @@
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--text); line-height: 1.4; }
 
+        /* MODAL / ANLEITUNG */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 3000; padding: 20px; }
+        .modal-content { background: white; padding: 20px; border-radius: 15px; max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .modal-content h2 { margin-top: 0; color: var(--primary); font-size: 1.2rem; border-bottom: 2px solid var(--accent); padding-bottom: 8px; }
+        .modal-content h3 { font-size: 1rem; margin: 15px 0 5px 0; color: var(--accent); }
+        .modal-content p, .modal-content li { font-size: 0.9rem; color: #444; }
+        .modal-content ul { padding-left: 18px; margin: 5px 0; }
+        .btn-close-modal { background: var(--success); color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 20px; }
+
+        /* HEADER & STICKY */
         .sticky-top-area { position: sticky; top: 0; z-index: 1000; background: var(--bg); }
         .header { background: white; padding: 10px 0; box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-align: center; }
         .logo-container img { width: 100%; max-width: 500px; height: auto; display: block; margin: 0 auto; }
         .header-content { padding: 5px 15px 10px 15px; background: white; }
-        input[type="text"] { width: 100%; padding: 10px; border-radius: 8px; border: 2px solid #eee; font-size: 16px; text-align: center; background: #f9f9f9; }
+        input[type="text"] { width: 100%; padding: 12px; border-radius: 8px; border: 2px solid #eee; font-size: 16px; text-align: center; background: #f9f9f9; font-weight: bold; }
 
-        .ranking-legend { background: #ffffff; padding: 10px; font-size: 0.75rem; border-bottom: 1px solid #ddd; display: flex; justify-content: space-around; box-shadow: 0 4px 6px -2px rgba(0,0,0,0.1); }
-        .score-box { padding: 2px 6px; border-radius: 4px; font-weight: bold; color: white; margin-right: 4px; }
-        .bg-red { background: #e74c3c; }
-        .bg-green { background: #2ecc71; }
+        /* LEGENDE & HILFE BUTTON */
+        .ranking-legend-row { background: #ffffff; padding: 10px 15px; border-bottom: 1px solid #ddd; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 6px -2px rgba(0,0,0,0.1); }
+        .legend-labels { display: flex; gap: 15px; font-size: 0.75rem; font-weight: 600; }
+        .score-box { padding: 2px 6px; border-radius: 4px; color: white; margin-right: 4px; }
+        .help-btn { background: var(--primary); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; border: none; font-size: 16px; }
 
+        /* POSTER LISTE */
         #mainContainer { padding: 15px; }
-        .poster-item { background: white; margin-bottom: 10px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 5px solid #ddd; }
-        .poster-item.active { border-left-color: var(--accent); }
+        .poster-item { background: white; margin-bottom: 12px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 5px solid #ddd; transition: 0.3s; }
+        .poster-item.active { border-left-color: var(--accent); transform: scale(1.01); }
         .poster-item.done { border-left-color: var(--success); background: #fafffb; }
 
-        .poster-header { padding: 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 0.85rem; }
-        .poster-title-area { display: flex; flex-direction: column; flex: 1; padding-right: 5px; }
+        .poster-header { padding: 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: flex-start; font-weight: 600; font-size: 0.85rem; }
+        .poster-title-area { flex: 1; padding-right: 10px; }
+        .author-info-btn { background: #f0f0f0; color: #666; width: 30px; height: 30px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
         
-        /* Autoren Button Style */
-        .author-info-btn { 
-            background: #eee; 
-            color: #666; 
-            width: 28px; 
-            height: 28px; 
-            border-radius: 6px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-size: 14px; 
-            flex-shrink: 0;
-            transition: background 0.2s;
-        }
-        .author-info-btn:active { background: #ddd; }
-
         .poster-content { display: none; padding: 10px 14px; border-top: 1px solid #f0f0f0; }
         .poster-item.active .poster-content { display: block; }
 
-        .crit-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f9f9f9; gap: 10px; }
-        .crit-label-area { display: flex; align-items: center; flex: 1; font-size: 0.82rem; font-weight: 500; }
-        .info-icon { display: inline-block; width: 18px; height: 18px; background: var(--accent); color: white; border-radius: 50%; text-align: center; line-height: 18px; font-size: 11px; margin-left: 8px; cursor: pointer; flex-shrink: 0; }
+        .crit-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f9f9f9; }
+        .info-icon { display: inline-block; width: 18px; height: 18px; background: var(--accent); color: white; border-radius: 50%; text-align: center; line-height: 18px; font-size: 11px; margin-left: 8px; cursor: pointer; }
         
-        .info-text-bubble { display: none; background: #ebf5fb; color: #2e86c1; padding: 8px; border-radius: 6px; font-size: 0.75rem; margin-bottom: 8px; border: 1px solid #d6eaf8; }
-        .author-bubble { display: none; background: #f9f9f9; color: #666; padding: 10px; border-radius: 6px; font-size: 0.75rem; margin-top: 8px; border: 1px solid #eee; font-style: italic; line-height: 1.3; }
+        .author-bubble, .info-text-bubble { display: none; background: #f8f9fa; padding: 10px; border-radius: 8px; font-size: 0.8rem; margin: 8px 0; border: 1px solid #eee; }
+        .info-text-bubble { background: #ebf5fb; color: #2e86c1; border-color: #d6eaf8; }
 
-        select { padding: 6px; border-radius: 6px; background: #fff; border: 2px solid #ddd; font-size: 1rem; width: 65px; font-weight: bold; }
+        select { padding: 8px; border-radius: 6px; border: 2px solid #ddd; font-size: 1.1rem; width: 70px; font-weight: bold; text-align: center; }
         .btn-save-local { background: var(--accent); color: white; border: none; padding: 14px; border-radius: 8px; width: 100%; font-weight: 800; margin-top: 10px; }
-        .btn-cloud { background: var(--success); color: white; border: none; padding: 18px; border-radius: 12px; width: calc(100% - 30px); font-size: 1.1rem; font-weight: 800; margin: 10px 15px 40px 15px; text-transform: uppercase; cursor: pointer; }
+        .btn-cloud { background: var(--success); color: white; border: none; padding: 18px; border-radius: 12px; width: calc(100% - 30px); font-size: 1.1rem; font-weight: 800; margin: 10px 15px 40px 15px; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3); }
 
-        #adminArea { padding: 15px; background: white; margin: 15px; border-radius: 12px; display: none; }
-        #adminTable table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
-        #adminTable th, #adminTable td { border: 1px solid #eee; padding: 8px; text-align: center; }
-        #adminTable th { background: #f8f9fa; }
-        .btn-csv { background: #e67e22; color: white; border: none; padding: 10px 15px; border-radius: 6px; font-weight: bold; margin-bottom: 15px; cursor: pointer; }
+        #adminArea { padding: 15px; background: white; margin: 15px; border-radius: 12px; display: none; border: 2px solid #e67e22; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
+        th, td { border: 1px solid #eee; padding: 6px; text-align: center; }
     </style>
 </head>
 <body>
+
+<div id="guideModal" class="modal-overlay">
+    <div class="modal-content">
+        <h2>📋 Kurzanleitung: Poster Award</h2>
+        <p>Herzlich willkommen zum Begutachtungsprozess! Damit die Bewertung der Poster reibungslos gelingt, beachten Sie bitte folgende Schritte:</p>
+        
+        <h3>1. Anmeldung</h3>
+        <p>Geben Sie Ihren Namen/Kürzel oben im Feld ein. Er wird automatisch Ihrer Jury-ID zugeordnet.</p>
+        
+        <h3>2. Bewertungsvorgang</h3>
+        <ul>
+            <li>Wählen Sie ein Poster aus der Liste.</li>
+            <li>Nutzen Sie die 3 Kriterien (1-5 Punkte).</li>
+            <li><b>Zwischenspeichern:</b> Ihre Eingaben werden automatisch lokal gespeichert. Sie können jederzeit pausieren.</li>
+        </ul>
+
+        <h3>3. Abschluss (WICHTIG!)</h3>
+        <p>Sobald Sie fertig sind, klicken Sie ganz unten auf den grünen Button <b>„Zentral Speichern“</b>. Erst dann werden die Daten an die Datenbank übertragen.</p>
+        
+        <button class="btn-close-modal" onclick="closeGuide()">Verstanden & Starten</button>
+    </div>
+</div>
 
 <div class="sticky-top-area">
     <div class="header">
@@ -77,25 +93,30 @@
     <div class="header-content">
         <input type="text" id="jurorName" placeholder="Ihr Name (Juroren-Kürzel)">
     </div>
-    <div class="ranking-legend">
-        <div class="legend-item"><span class="score-box bg-red">1</span> schlecht</div>
-        <div class="legend-item">...</div>
-        <div class="legend-item"><span class="score-box bg-green">5</span> exzellent</div>
+    <div class="ranking-legend-row">
+        <div class="legend-labels">
+            <div><span class="score-box" style="background:#e74c3c">1</span> schlecht</div>
+            <div>...</div>
+            <div><span class="score-box" style="background:#2ecc71">5</span> exzellent</div>
+        </div>
+        <button class="help-btn" onclick="openGuide()" title="Anleitung öffnen">?</button>
     </div>
 </div>
 
 <div id="mainContainer"></div>
 
 <button class="btn-cloud" onclick="finalCloudUpload()">Zentral Speichern</button>
-<button onclick="toggleAdmin()" style="width:100%; padding:20px; opacity:0.05; background:none; border:none;">Admin</button>
+
+<button onclick="toggleAdmin()" style="width:100%; padding:20px; opacity:0.02; background:none; border:none;">Admin</button>
 
 <div id="adminArea">
     <h3>Ranking Übersicht</h3>
-    <button class="btn-csv" onclick="exportToCSV()">Als CSV exportieren</button>
+    <button onclick="exportToCSV()" style="background:#e67e22; color:white; border:none; padding:8px; border-radius:5px; margin-bottom:10px;">CSV Export</button>
     <div id="adminTable"></div>
 </div>
 
 <script>
+    // Firebase Config
     const firebaseConfig = {
         apiKey: "AIzaSyAMk8sqJiTbOB1LKNZJ4peKEBoyz_2sohM",
         authDomain: "dgfb-2026.firebaseapp.com",
@@ -106,11 +127,21 @@
         appId: "1:195774055960:web:b83f48b55f8ffd5266a56d",
         measurementId: "G-0CS3ZW0ZDV"
     };
-    
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
+
     let jurorUID = localStorage.getItem('jurorUID') || ("J-" + Math.random().toString(36).substr(2, 5).toUpperCase());
     localStorage.setItem('jurorUID', jurorUID);
+
+    // Guide Logik
+    window.onload = () => {
+        if (!localStorage.getItem('guideSeen')) { openGuide(); }
+    };
+    function openGuide() { document.getElementById('guideModal').style.display = 'flex'; }
+    function closeGuide() { 
+        document.getElementById('guideModal').style.display = 'none'; 
+        localStorage.setItem('guideSeen', 'true');
+    }
 
     const posterData = [
         { id: "109", title: "Biomechanische Testung von Kabelklammerimplantaten zur Stabilisierung des vorderen Beckenrings im Zweibeinstandversuch", authors: "Bremer; Simon; Heilig; Heilig; Al Refai; Hölscher-Doht; Meffert; Jordan" },
@@ -125,22 +156,22 @@
         { id: "170", title: "Evaluating Human Activity Recognition Algorithms for Weight-bearing Detection From Smart Insoles", authors: "Catalano; Kersting; Kalpen" },
         { id: "172", title: "Lockerungserkennung von Hüftendoprothesen-stielen mittels Körperschallmessungen an mehreren Implantat-positionen", authors: "Graumüller; Geiger; Spors; Bader; Kluess; Haubelt" },
         { id: "180", title: "Regional Spatial Activation Patterns of the Biceps Femoris Long Head Remain Consistent Across Joint Angles During Eccentric Knee Flexion", authors: "Fassbender; Karamanidis; Potthast" },
-        { id: "185", title: "Gibt es seitenspezifische Unterschiede in der Belastbarkeit von Pedikelschrauben? Vergleich der Knochendichte mit biomechanischen Testungen", authors: "Metzner; Schleifenbaum; Schultze; Kurz; Heyde; Pieroh" },
-        { id: "188", title: "Einfluss von Krafttraining der Oberschenkelmuskulatur auf die Kniegelenkskinematik und -kinetik beim Gehen: Eine Pilotstudie", authors: "Osterloh; Kietz; Knaack; Kebbach; Bader; Behrens" },
+        { id: "185", title: "Gibt es seitenspezifische Unterschiede in der Belastbarkeit von Pedikelschrauben?", authors: "Metzner; Schleifenbaum; Schultze; Kurz; Heyde; Pieroh" },
+        { id: "188", title: "Einfluss von Krafttraining der Oberschenkelmuskulatur auf die Kniegelenkskinematik: Pilotstudie", authors: "Osterloh; Kietz; Knaack; Kebbach; Bader; Behrens" },
         { id: "200", title: "A Comparison of Methods to Investigate Vibration Perception Thresholds at the Foot", authors: "Zippenfennig; Kloß; Milani; Marin; Drechsel" },
-        { id: "204", title: "In vivo Belastung induziert ortsspezifische, teilweise reversible Gewebeanpassung in kaudalen Wirbelkörpern", authors: "Erhard; Thiele; Bonell; Celik; Duda" },
-        { id: "223", title: "Einfluss neuromuskulärer Stimulation auf thermografische Veränderungen der Rückenmuskulatur während langer Sitzphasen", authors: "Lieshoff; Sichting" },
+        { id: "204", title: "In vivo Belastung induziert ortsspezifische Gewebeanpassung in kaudalen Wirbelkörpern", authors: "Erhard; Thiele; Bonell; Celik; Duda" },
+        { id: "223", title: "Einfluss neuromuskulärer Stimulation auf thermografische Veränderungen der Rückenmuskulatur", authors: "Lieshoff; Sichting" },
         { id: "224", title: "Adhesion Enhancement of Titanium Nanotubes on Ti6Al4V: Scratch Test Evaluation", authors: "Buchholz; Voropai; Bertrand; Lohmann; Döring" },
         { id: "226", title: "Biomechanische Analyse der Band- und Sehnenstruktur des Kniegelenks", authors: "Fischer; Metzner; Wang; Zheng; Löffler; Theopold; Schleifenbaum" },
         { id: "227", title: "Development of an Advanced Knee Simulator for Dynamic Motion: A Feasibility Study", authors: "Prusa; Tomka; Haddara; Woiczinski; Grupp; Müller; Dan; Raniga; Ferreira; Appleyard" },
         { id: "229", title: "Single vs. Double Plating in Low Transverse Sacral Fractures – A Biomechanical Study", authors: "Rudek; Lindtner; Hörmann; Schmölz" },
         { id: "233", title: "Biomechanical Analysis and Hyperelastic Modelling of Porcine Growth Plates Under Compression", authors: "Hucke; Teixeira; Seitz; Gámez; Huß; Hammer; Wittek; Niestrawska" },
-        { id: "238", title: "Überwachung der Knochenheilung mithilfe einer Sensorenplatte (Smart Implant) über einen Zeitraum von über 11 Jahren", authors: "Meissner; Münch; Barth; Weinrich; Schulz" },
-        { id: "239", title: "Computational Framework for Mechanical Analysis of Highly Aligned Channel-like Collagen Scaffolds in Critical-size Bone Defects", authors: "Hinrichsen; Gutschmidt; Oppermann; Huber; Checa" },
-        { id: "241", title: "Experimenteller Aufbau zur quasistatischen Prüfung von Sternumfrakturen mit osteosynthetischer Versorgung", authors: "Meissner; Münch; Preißing; Schulz-Drost; Schulz" },
+        { id: "238", title: "Überwachung der Knochenheilung mithilfe einer Sensorenplatte (Smart Implant) > 11 Jahre", authors: "Meissner; Münch; Barth; Weinrich; Schulz" },
+        { id: "239", title: "Computational Framework for Mechanical Analysis of Highly Aligned Channel-like Collagen Scaffolds", authors: "Hinrichsen; Gutschmidt; Oppermann; Huber; Checa" },
+        { id: "241", title: "Experimenteller Aufbau zur quasistatischen Prüfung von Sternumfrakturen", authors: "Meissner; Münch; Preißing; Schulz-Drost; Schulz" },
         { id: "251", title: "Muscle Extension Analysis for Soft Wearable Systems Design", authors: "Sadretdinova; Siegmund; Schuh; Kyosev" },
-        { id: "259", title: "Accuracy of a Simplified Method for Assessing Triceps Surae Muscle Volume in Patients After Fibula Free Flap Surgery: A MRI Case Series", authors: "Kelley; Kharazi; Bär; Kühn; Kämmerer; Weber; Karamanidis" },
-        { id: "264", title: "Longitudinale Entwicklung verschiedener Gangparameter nach Sprunggelenksfraktur: Eine Follow-up-analyse von 3 bis 6 Monaten postoperativ", authors: "Oestreich; Rieken; Joseph; Zeckey" },
+        { id: "259", title: "Accuracy of a Simplified Method for Assessing Triceps Surae Muscle Volume", authors: "Kelley; Kharazi; Bär; Kühn; Kämmerer; Weber; Karamanidis" },
+        { id: "264", title: "Longitudinale Entwicklung verschiedener Gangparameter nach Sprunggelenksfraktur", authors: "Oestreich; Rieken; Joseph; Zeckey" },
         { id: "270", title: "Developing an Electromechanical Computational Model of the Human Stomach", authors: "Henke; Brandstaeter; Gizzi; Aydin; Cyron" }
     ];
 
@@ -157,9 +188,8 @@
             critHtml += `
             <div id="info-bubble-${pIdx}-${cIdx}" class="info-text-bubble">${c.info}</div>
             <div class="crit-row">
-                <div class="crit-label-area">
-                    <span>${c.name}</span>
-                    <span class="info-icon" onclick="event.stopPropagation(); toggleInfoText(${pIdx}, ${cIdx})">i</span>
+                <div style="display:flex; align-items:center; font-size:0.85rem;">
+                    ${c.name} <span class="info-icon" onclick="event.stopPropagation(); toggleEl('info-bubble-${pIdx}-${cIdx}')">i</span>
                 </div>
                 <select class="score-sel" data-p="${pIdx}" data-c="${cIdx}">
                     <option value="" disabled selected>-</option>
@@ -173,26 +203,20 @@
         item.innerHTML = `
             <div class="poster-header" onclick="togglePoster(${pIdx})">
                 <div class="poster-title-area">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
                         <span><strong>${p.id}</strong>: ${p.title}</span>
-                        <span class="author-info-btn" onclick="event.stopPropagation(); toggleAuthor(${pIdx})">👤</span>
+                        <span class="author-info-btn" onclick="event.stopPropagation(); toggleEl('author-bubble-${pIdx}')">👤</span>
                     </div>
                     <div id="author-bubble-${pIdx}" class="author-bubble">${p.authors}</div>
                 </div>
-                <span class="status-dot"></span>
             </div>
             <div class="poster-content">${critHtml}<button class="btn-save-local" onclick="saveLocal(${pIdx})">Übernehmen</button></div>`;
         container.appendChild(item);
     });
 
-    function toggleInfoText(pIdx, cIdx) {
-        const bubble = document.getElementById(`info-bubble-${pIdx}-${cIdx}`);
-        bubble.style.display = (bubble.style.display === 'block') ? 'none' : 'block';
-    }
-
-    function toggleAuthor(pIdx) {
-        const bubble = document.getElementById(`author-bubble-${pIdx}`);
-        bubble.style.display = (bubble.style.display === 'block') ? 'none' : 'block';
+    function toggleEl(id) {
+        const el = document.getElementById(id);
+        el.style.display = (el.style.display === 'block') ? 'none' : 'block';
     }
 
     function togglePoster(idx) {
@@ -201,9 +225,7 @@
         document.querySelectorAll('.poster-item').forEach(el => el.classList.remove('active'));
         if (!isActive) {
             item.classList.add('active');
-            const yOffset = -220; 
-            const y = item.getBoundingClientRect().top + window.pageYOffset + yOffset;
-            window.scrollTo({top: y, behavior: 'smooth'});
+            window.scrollTo({ top: item.offsetTop - 180, behavior: 'smooth' });
         }
     }
 
@@ -212,8 +234,8 @@
         if(!name) { alert("Bitte Namen eingeben!"); return; }
         const selects = document.querySelectorAll(`.score-sel[data-p="${idx}"]`);
         let allFilled = true;
-        selects.forEach(s => { if(s.value === "") allFilled = false; });
-        if(!allFilled) { alert("Bitte alle 3 Kriterien bewerten!"); return; }
+        selects.forEach(s => { if(!s.value) allFilled = false; });
+        if(!allFilled) { alert("Bitte alle Kriterien bewerten!"); return; }
         document.getElementById(`poster-item-${idx}`).classList.add('done');
         document.getElementById(`poster-item-${idx}`).classList.remove('active');
         autoSave();
@@ -230,7 +252,8 @@
         db.ref('results/' + jurorUID).set({ juror_name: name, ratings: ratings });
     }
 
-    function finalCloudUpload() { autoSave(); alert("Daten synchronisiert!"); }
+    function finalCloudUpload() { autoSave(); alert("Daten wurden erfolgreich zentral gespeichert!"); }
+
     function toggleAdmin() { if(prompt("Passwort:") === "admin123") { document.getElementById('adminArea').style.display = 'block'; loadAdminTable(); } }
 
     function loadAdminTable() {
@@ -247,12 +270,9 @@
                 }
                 stats.push({ id: p.id, title: p.title, avg: count > 0 ? (sum / count) : 0, votes: count });
             });
-            stats.sort((a, b) => b.avg - a.avg || b.votes - a.votes);
-            let html = '<table><tr><th>ID</th><th>Poster</th><th>Ø</th><th>Votes</th></tr>';
-            stats.forEach((s) => {
-                const warning = s.votes < 3 ? 'style="color:#e74c3c;font-weight:bold;"' : '';
-                html += `<tr><td>${s.id}</td><td style="text-align:left">${s.title}</td><td><b>${s.avg > 0 ? s.avg.toFixed(2) : '-'}</b></td><td ${warning}>${s.votes}</td></tr>`;
-            });
+            stats.sort((a, b) => b.avg - a.avg);
+            let html = '<table><tr><th>ID</th><th>Ø</th><th>Votes</th></tr>';
+            stats.forEach(s => { html += `<tr><td>${s.id}</td><td>${s.avg.toFixed(2)}</td><td>${s.votes}</td></tr>`; });
             document.getElementById('adminTable').innerHTML = html + '</table>';
         });
     }
@@ -260,22 +280,19 @@
     function exportToCSV() {
         db.ref('results').once('value', snap => {
             const results = snap.val();
-            let csv = "\ufeffJuror;Poster-ID;Titel;Votes (Poster);Mittelwert\n";
-            let pVotes = {};
-            posterData.forEach((p, i) => {
-                let count = 0; for(let uid in results) { if(results[uid].ratings && results[uid].ratings[i]) count++; }
-                pVotes[i] = count;
-            });
+            let csv = "\ufeffJuror;Poster-ID;Mittelwert\n";
             for(let uid in results) {
                 const r = results[uid].ratings;
                 for(let pIdx in r) {
                     let sum = 0; for(let c=0; c<3; c++) sum += r[pIdx][c];
-                    csv += `"${results[uid].juror_name}";"${posterData[pIdx].id}";"${posterData[pIdx].title}";${pVotes[pIdx]};${(sum/3).toFixed(2)}\n`;
+                    csv += `"${results[uid].juror_name}";"${posterData[pIdx].id}";${(sum/3).toFixed(2)}\n`;
                 }
             }
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement("a"); link.href = URL.createObjectURL(blob);
-            link.download = "DGfB2026_Final_Ranking.csv"; link.click();
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "DGfB_Ranking.csv";
+            link.click();
         });
     }
 </script>
