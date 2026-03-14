@@ -8,139 +8,64 @@
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
     
     <style>
-        :root { 
-            --primary: #2c3e50; 
-            --accent: #3498db; 
-            --bg: #f0f2f5; 
-            --success: #2ecc71; 
-            --text: #2c3e50;
-        }
-
+        :root { --primary: #2c3e50; --accent: #3498db; --bg: #f0f2f5; --success: #2ecc71; --text: #2c3e50; }
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--text); line-height: 1.4; }
 
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-            background: var(--bg); margin: 0; padding: 0; color: var(--text); line-height: 1.4;
-        }
-
-        .sticky-top-area {
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            background: var(--bg);
-        }
-
-        .header { 
-            background: white; 
-            padding: 10px 0; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
-            text-align: center; 
-        }
-        
+        .sticky-top-area { position: sticky; top: 0; z-index: 1000; background: var(--bg); }
+        .header { background: white; padding: 10px 0; box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-align: center; }
         .logo-container img { width: 100%; max-width: 500px; height: auto; display: block; margin: 0 auto; }
-
         .header-content { padding: 5px 15px 10px 15px; background: white; }
-        input[type="text"] { 
-            width: 100%; padding: 10px; border-radius: 8px; border: 2px solid #eee; 
-            font-size: 16px; text-align: center; background: #f9f9f9;
-        }
+        input[type="text"] { width: 100%; padding: 10px; border-radius: 8px; border: 2px solid #eee; font-size: 16px; text-align: center; background: #f9f9f9; }
 
-        .ranking-legend {
-            background: #ffffff; 
-            padding: 10px; 
-            font-size: 0.75rem; 
-            border-bottom: 1px solid #ddd; 
-            display: flex; 
-            justify-content: space-around;
-            box-shadow: 0 4px 6px -2px rgba(0,0,0,0.1);
-        }
-
+        .ranking-legend { background: #ffffff; padding: 10px; font-size: 0.75rem; border-bottom: 1px solid #ddd; display: flex; justify-content: space-around; box-shadow: 0 4px 6px -2px rgba(0,0,0,0.1); }
         .score-box { padding: 2px 6px; border-radius: 4px; font-weight: bold; color: white; margin-right: 4px; }
         .bg-red { background: #e74c3c; }
         .bg-green { background: #2ecc71; }
 
         #mainContainer { padding: 15px; }
-
-        .poster-item { 
-            background: white; margin-bottom: 10px; border-radius: 10px; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 5px solid #ddd;
-        }
+        .poster-item { background: white; margin-bottom: 10px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 5px solid #ddd; }
         .poster-item.active { border-left-color: var(--accent); }
         .poster-item.done { border-left-color: var(--success); background: #fafffb; }
 
         .poster-header { padding: 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 0.85rem; }
+        .poster-title-area { display: flex; flex-direction: column; flex: 1; padding-right: 5px; }
+        
+        /* Autoren Button Style */
+        .author-info-btn { 
+            background: #eee; 
+            color: #666; 
+            width: 28px; 
+            height: 28px; 
+            border-radius: 6px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 14px; 
+            flex-shrink: 0;
+            transition: background 0.2s;
+        }
+        .author-info-btn:active { background: #ddd; }
 
         .poster-content { display: none; padding: 10px 14px; border-top: 1px solid #f0f0f0; }
         .poster-item.active .poster-content { display: block; }
 
-        .crit-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid #f9f9f9;
-            gap: 10px;
-        }
+        .crit-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f9f9f9; gap: 10px; }
+        .crit-label-area { display: flex; align-items: center; flex: 1; font-size: 0.82rem; font-weight: 500; }
+        .info-icon { display: inline-block; width: 18px; height: 18px; background: var(--accent); color: white; border-radius: 50%; text-align: center; line-height: 18px; font-size: 11px; margin-left: 8px; cursor: pointer; flex-shrink: 0; }
+        
+        .info-text-bubble { display: none; background: #ebf5fb; color: #2e86c1; padding: 8px; border-radius: 6px; font-size: 0.75rem; margin-bottom: 8px; border: 1px solid #d6eaf8; }
+        .author-bubble { display: none; background: #f9f9f9; color: #666; padding: 10px; border-radius: 6px; font-size: 0.75rem; margin-top: 8px; border: 1px solid #eee; font-style: italic; line-height: 1.3; }
 
-        .crit-label-area {
-            display: flex;
-            align-items: center;
-            flex: 1;
-            font-size: 0.82rem;
-            font-weight: 500;
-        }
-
-        .info-icon {
-            display: inline-block;
-            width: 18px;
-            height: 18px;
-            background: var(--accent);
-            color: white;
-            border-radius: 50%;
-            text-align: center;
-            line-height: 18px;
-            font-size: 11px;
-            margin-left: 8px;
-            cursor: pointer;
-            flex-shrink: 0;
-        }
-
-        .info-text-bubble {
-            display: none;
-            background: #ebf5fb;
-            color: #2e86c1;
-            padding: 8px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            margin-bottom: 8px;
-            border: 1px solid #d6eaf8;
-        }
-
-        select { 
-            padding: 6px; border-radius: 6px; background: #fff; 
-            border: 2px solid #ddd; font-size: 1rem; width: 65px; font-weight: bold; 
-        }
-
-        .btn-save-local { 
-            background: var(--accent); color: white; border: none; padding: 14px; 
-            border-radius: 8px; width: 100%; font-weight: 800; margin-top: 10px;
-        }
-
-        .btn-cloud { 
-            background: var(--success); color: white; border: none; padding: 18px; 
-            border-radius: 12px; width: calc(100% - 30px); font-size: 1.1rem; 
-            font-weight: 800; margin: 10px 15px 40px 15px; text-transform: uppercase;
-        }
+        select { padding: 6px; border-radius: 6px; background: #fff; border: 2px solid #ddd; font-size: 1rem; width: 65px; font-weight: bold; }
+        .btn-save-local { background: var(--accent); color: white; border: none; padding: 14px; border-radius: 8px; width: 100%; font-weight: 800; margin-top: 10px; }
+        .btn-cloud { background: var(--success); color: white; border: none; padding: 18px; border-radius: 12px; width: calc(100% - 30px); font-size: 1.1rem; font-weight: 800; margin: 10px 15px 40px 15px; text-transform: uppercase; cursor: pointer; }
 
         #adminArea { padding: 15px; background: white; margin: 15px; border-radius: 12px; display: none; }
         #adminTable table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
         #adminTable th, #adminTable td { border: 1px solid #eee; padding: 8px; text-align: center; }
         #adminTable th { background: #f8f9fa; }
-        
-        .btn-csv {
-            background: #e67e22; color: white; border: none; padding: 10px 15px; 
-            border-radius: 6px; font-weight: bold; margin-bottom: 15px; cursor: pointer;
-        }
+        .btn-csv { background: #e67e22; color: white; border: none; padding: 10px 15px; border-radius: 6px; font-weight: bold; margin-bottom: 15px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -149,11 +74,9 @@
     <div class="header">
         <div class="logo-container"><img src="https://bio-mechanik.org/wp-content/uploads/2025/08/DGfB-banner-v8-1.png"></div>
     </div>
-    
     <div class="header-content">
         <input type="text" id="jurorName" placeholder="Ihr Name (Juroren-Kürzel)">
     </div>
-
     <div class="ranking-legend">
         <div class="legend-item"><span class="score-box bg-red">1</span> schlecht</div>
         <div class="legend-item">...</div>
@@ -164,7 +87,6 @@
 <div id="mainContainer"></div>
 
 <button class="btn-cloud" onclick="finalCloudUpload()">Zentral Speichern</button>
-
 <button onclick="toggleAdmin()" style="width:100%; padding:20px; opacity:0.05; background:none; border:none;">Admin</button>
 
 <div id="adminArea">
@@ -190,36 +112,36 @@
     let jurorUID = localStorage.getItem('jurorUID') || ("J-" + Math.random().toString(36).substr(2, 5).toUpperCase());
     localStorage.setItem('jurorUID', jurorUID);
 
-    const titles = [
-        "109 Biomechanische Testung von Kabelklammerimplantaten (Vorderer Beckenring)",
-        "111 Exploring Optimal Body Positioning in MTB Gravity Sports using IMU Data",
-        "129 Be Real: Predicting Treadmill Belt Speed Changes in Walking",
-        "146 Einfluss mechanischer Belastung auf das Quellverhalten der Bandscheibe",
-        "154 Pilotstudie: Plantar- und Kieferprovokationen auf Gangparameter",
-        "155 Gait Variations: Neurological Patient Groups vs. Healthy Control",
-        "158 Osteosynthesis Screw Failure Prediction (Machine-Learning)",
-        "162 Biomechanical Gait Parameters (Transfemoral Amputation - Multicenter)",
-        "168 µCT-based Geometry in Biomechanical Testing (Rat Model)",
-        "170 Evaluating Human Activity Recognition (Smart Insoles)",
-        "172 Lockerungserkennung von Hüftendoprothesen mittels Körperschall",
-        "180 Spatial Activation Patterns of Biceps Femoris (Eccentric Knee Flexion)",
-        "185 Seitenspezifische Unterschiede Belastbarkeit Pedikelschrauben",
-        "188 Einfluss Krafttraining Oberschenkel auf Kniegelenkskinematik",
-        "200 Methods to Investigate Vibration Perception Thresholds at the Foot",
-        "204 In vivo Belastung und Gewebeanpassung in kaudalen Wirbelkörpern",
-        "223 Neuromuskuläre Stimulation & Thermografie der Rückenmuskulatur",
-        "224 Adhesion Enhancement of Titanium Nanotubes on Ti6Al4V",
-        "226 Biomechanische Analyse der Band- und Sehnenstruktur (Kniegelenk)",
-        "227 Development of an Advanced Knee Simulator for Dynamic Motion",
-        "229 Single vs. Double Plating in Low Transverse Sacral Fractures",
-        "233 Biomechanical Analysis of Porcine Growth Plates (Compression)",
-        "238 Überwachung der Knochenheilung (Smart Implant) > 11 Jahre",
-        "239 Computational Analysis: Collagen Scaffolds in Bone Defects",
-        "241 Experimenteller Aufbau: Prüfung von Sternumfrakturen",
-        "251 Muscle Extension Analysis for Soft Wearable Systems Design",
-        "259 Triceps Surae Muscle Volume Assessment after Fibula Free Flap",
-        "264 Longitudinale Entwicklung Gangparameter nach Sprunggelenksfraktur",
-        "270 Electromechanical Computational Model of the Human Stomach"
+    const posterData = [
+        { id: "109", title: "Biomechanische Testung von Kabelklammerimplantaten zur Stabilisierung des vorderen Beckenrings im Zweibeinstandversuch", authors: "Bremer; Simon; Heilig; Heilig; Al Refai; Hölscher-Doht; Meffert; Jordan" },
+        { id: "111", title: "Exploring Optimal Body Positioning in MTB Gravity Sports Using IMU Data", authors: "Ronzon; Strutzenberger; Hollaus" },
+        { id: "129", title: "Be Real: Predicting Treadmill Belt Speed Changes in Walking", authors: "Fleischmann; Eskofier; Koelewijn" },
+        { id: "146", title: "Wie beeinflusst mechanische Belastung das Quellverhalten der Bandscheibe? Eine In-vitro-studie", authors: "Greiner-Perth; Unseld; Wilke; Liebsch" },
+        { id: "154", title: "Pilotstudie: Analyse intra- und interindividueller Effekte von Plantar- und Kieferprovokationen auf spatio-temporale Gangparameter", authors: "Wigger; Becker; Kaya; Osterloh; Kietz; Soodmand; Knaack; Feldhege; Su; Perchthaler; Kebbach; Bader" },
+        { id: "155", title: "Comparison of Gait Variations During Forward, Sideways, and Backward Movement Between Neurological Patient Groups and a Healthy Control Group", authors: "Knottnerus-Meyer; Wagner; Schümann; Romijnders; Litzenberger; Maetzler; Zelenka; Hansen" },
+        { id: "158", title: "Osteosynthesis Screw Failure Predicted by Peri-implant Bone Morphology and Load Angle Using Machine-learning Models", authors: "Reisinger; Silva-Henao; Decet" },
+        { id: "162", title: "Variability in Biomechanical Gait Parameters of a Person With a Transfemoral Amputation – Results of a Multicenter Study", authors: "Ernst; Pröbsting; Schopper; Schmalz; Bellmann" },
+        { id: "168", title: "Integrating µCT-based Geometry Into Biomechanical Testing of Bone Properties in the Rat Model", authors: "Komrakova; Staub; Böker; Schilling; Lehmann; Sehmisch; Hoffmann" },
+        { id: "170", title: "Evaluating Human Activity Recognition Algorithms for Weight-bearing Detection From Smart Insoles", authors: "Catalano; Kersting; Kalpen" },
+        { id: "172", title: "Lockerungserkennung von Hüftendoprothesen-stielen mittels Körperschallmessungen an mehreren Implantat-positionen", authors: "Graumüller; Geiger; Spors; Bader; Kluess; Haubelt" },
+        { id: "180", title: "Regional Spatial Activation Patterns of the Biceps Femoris Long Head Remain Consistent Across Joint Angles During Eccentric Knee Flexion", authors: "Fassbender; Karamanidis; Potthast" },
+        { id: "185", title: "Gibt es seitenspezifische Unterschiede in der Belastbarkeit von Pedikelschrauben? Vergleich der Knochendichte mit biomechanischen Testungen", authors: "Metzner; Schleifenbaum; Schultze; Kurz; Heyde; Pieroh" },
+        { id: "188", title: "Einfluss von Krafttraining der Oberschenkelmuskulatur auf die Kniegelenkskinematik und -kinetik beim Gehen: Eine Pilotstudie", authors: "Osterloh; Kietz; Knaack; Kebbach; Bader; Behrens" },
+        { id: "200", title: "A Comparison of Methods to Investigate Vibration Perception Thresholds at the Foot", authors: "Zippenfennig; Kloß; Milani; Marin; Drechsel" },
+        { id: "204", title: "In vivo Belastung induziert ortsspezifische, teilweise reversible Gewebeanpassung in kaudalen Wirbelkörpern", authors: "Erhard; Thiele; Bonell; Celik; Duda" },
+        { id: "223", title: "Einfluss neuromuskulärer Stimulation auf thermografische Veränderungen der Rückenmuskulatur während langer Sitzphasen", authors: "Lieshoff; Sichting" },
+        { id: "224", title: "Adhesion Enhancement of Titanium Nanotubes on Ti6Al4V: Scratch Test Evaluation", authors: "Buchholz; Voropai; Bertrand; Lohmann; Döring" },
+        { id: "226", title: "Biomechanische Analyse der Band- und Sehnenstruktur des Kniegelenks", authors: "Fischer; Metzner; Wang; Zheng; Löffler; Theopold; Schleifenbaum" },
+        { id: "227", title: "Development of an Advanced Knee Simulator for Dynamic Motion: A Feasibility Study", authors: "Prusa; Tomka; Haddara; Woiczinski; Grupp; Müller; Dan; Raniga; Ferreira; Appleyard" },
+        { id: "229", title: "Single vs. Double Plating in Low Transverse Sacral Fractures – A Biomechanical Study", authors: "Rudek; Lindtner; Hörmann; Schmölz" },
+        { id: "233", title: "Biomechanical Analysis and Hyperelastic Modelling of Porcine Growth Plates Under Compression", authors: "Hucke; Teixeira; Seitz; Gámez; Huß; Hammer; Wittek; Niestrawska" },
+        { id: "238", title: "Überwachung der Knochenheilung mithilfe einer Sensorenplatte (Smart Implant) über einen Zeitraum von über 11 Jahren", authors: "Meissner; Münch; Barth; Weinrich; Schulz" },
+        { id: "239", title: "Computational Framework for Mechanical Analysis of Highly Aligned Channel-like Collagen Scaffolds in Critical-size Bone Defects", authors: "Hinrichsen; Gutschmidt; Oppermann; Huber; Checa" },
+        { id: "241", title: "Experimenteller Aufbau zur quasistatischen Prüfung von Sternumfrakturen mit osteosynthetischer Versorgung", authors: "Meissner; Münch; Preißing; Schulz-Drost; Schulz" },
+        { id: "251", title: "Muscle Extension Analysis for Soft Wearable Systems Design", authors: "Sadretdinova; Siegmund; Schuh; Kyosev" },
+        { id: "259", title: "Accuracy of a Simplified Method for Assessing Triceps Surae Muscle Volume in Patients After Fibula Free Flap Surgery: A MRI Case Series", authors: "Kelley; Kharazi; Bär; Kühn; Kämmerer; Weber; Karamanidis" },
+        { id: "264", title: "Longitudinale Entwicklung verschiedener Gangparameter nach Sprunggelenksfraktur: Eine Follow-up-analyse von 3 bis 6 Monaten postoperativ", authors: "Oestreich; Rieken; Joseph; Zeckey" },
+        { id: "270", title: "Developing an Electromechanical Computational Model of the Human Stomach", authors: "Henke; Brandstaeter; Gizzi; Aydin; Cyron" }
     ];
 
     const criteriaData = [
@@ -229,7 +151,7 @@
     ];
 
     const container = document.getElementById('mainContainer');
-    titles.forEach((title, pIdx) => {
+    posterData.forEach((p, pIdx) => {
         let critHtml = '';
         criteriaData.forEach((c, cIdx) => {
             critHtml += `
@@ -237,7 +159,7 @@
             <div class="crit-row">
                 <div class="crit-label-area">
                     <span>${c.name}</span>
-                    <span class="info-icon" onclick="toggleInfoText(${pIdx}, ${cIdx})">i</span>
+                    <span class="info-icon" onclick="event.stopPropagation(); toggleInfoText(${pIdx}, ${cIdx})">i</span>
                 </div>
                 <select class="score-sel" data-p="${pIdx}" data-c="${cIdx}">
                     <option value="" disabled selected>-</option>
@@ -249,7 +171,16 @@
         item.className = 'poster-item';
         item.id = `poster-item-${pIdx}`;
         item.innerHTML = `
-            <div class="poster-header" onclick="togglePoster(${pIdx})"><span>${title}</span><span class="status-dot"></span></div>
+            <div class="poster-header" onclick="togglePoster(${pIdx})">
+                <div class="poster-title-area">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
+                        <span><strong>${p.id}</strong>: ${p.title}</span>
+                        <span class="author-info-btn" onclick="event.stopPropagation(); toggleAuthor(${pIdx})">👤</span>
+                    </div>
+                    <div id="author-bubble-${pIdx}" class="author-bubble">${p.authors}</div>
+                </div>
+                <span class="status-dot"></span>
+            </div>
             <div class="poster-content">${critHtml}<button class="btn-save-local" onclick="saveLocal(${pIdx})">Übernehmen</button></div>`;
         container.appendChild(item);
     });
@@ -259,13 +190,18 @@
         bubble.style.display = (bubble.style.display === 'block') ? 'none' : 'block';
     }
 
+    function toggleAuthor(pIdx) {
+        const bubble = document.getElementById(`author-bubble-${pIdx}`);
+        bubble.style.display = (bubble.style.display === 'block') ? 'none' : 'block';
+    }
+
     function togglePoster(idx) {
         const item = document.getElementById(`poster-item-${idx}`);
         const isActive = item.classList.contains('active');
         document.querySelectorAll('.poster-item').forEach(el => el.classList.remove('active'));
         if (!isActive) {
             item.classList.add('active');
-            const yOffset = -180; 
+            const yOffset = -220; 
             const y = item.getBoundingClientRect().top + window.pageYOffset + yOffset;
             window.scrollTo({top: y, behavior: 'smooth'});
         }
@@ -295,78 +231,51 @@
     }
 
     function finalCloudUpload() { autoSave(); alert("Daten synchronisiert!"); }
-    
-    function toggleAdmin() { 
-        if(prompt("Passwort:") === "admin123") { 
-            document.getElementById('adminArea').style.display = 'block'; 
-            loadAdminTable(); 
-        } 
-    }
+    function toggleAdmin() { if(prompt("Passwort:") === "admin123") { document.getElementById('adminArea').style.display = 'block'; loadAdminTable(); } }
 
     function loadAdminTable() {
         db.ref('results').on('value', snap => {
             const results = snap.val();
             let stats = [];
-
-            titles.forEach((t, i) => {
+            posterData.forEach((p, i) => {
                 let sum = 0, count = 0;
                 for(let uid in results) {
                     if(results[uid].ratings && results[uid].ratings[i]) {
-                        let pSum = 0;
-                        for(let c=0; c<3; c++) pSum += results[uid].ratings[i][c];
-                        sum += (pSum / 3);
-                        count++;
+                        let pSum = 0; for(let c=0; c<3; c++) pSum += results[uid].ratings[i][c];
+                        sum += (pSum / 3); count++;
                     }
                 }
-                stats.push({ title: t, avg: count > 0 ? (sum / count) : 0, votes: count });
+                stats.push({ id: p.id, title: p.title, avg: count > 0 ? (sum / count) : 0, votes: count });
             });
-
             stats.sort((a, b) => b.avg - a.avg || b.votes - a.votes);
-
-            let html = '<table><tr><th>Rang</th><th>Poster</th><th>Ø (3 Krit.)</th><th>Votes</th></tr>';
-            stats.forEach((s, index) => {
-                const warningStyle = s.votes < 3 ? 'style="color: #e74c3c; font-weight:bold;"' : '';
-                html += `<tr>
-                    <td>${index + 1}</td>
-                    <td style="text-align:left">${s.title}</td>
-                    <td><b>${s.avg > 0 ? s.avg.toFixed(2) : '-'}</b></td>
-                    <td ${warningStyle}>${s.votes}</td>
-                </tr>`;
+            let html = '<table><tr><th>ID</th><th>Poster</th><th>Ø</th><th>Votes</th></tr>';
+            stats.forEach((s) => {
+                const warning = s.votes < 3 ? 'style="color:#e74c3c;font-weight:bold;"' : '';
+                html += `<tr><td>${s.id}</td><td style="text-align:left">${s.title}</td><td><b>${s.avg > 0 ? s.avg.toFixed(2) : '-'}</b></td><td ${warning}>${s.votes}</td></tr>`;
             });
-            document.getElementById('adminTable').innerHTML = html + '</table><p><small>* Rote Votes = Weniger als 3 Bewertungen</small></p>';
+            document.getElementById('adminTable').innerHTML = html + '</table>';
         });
     }
 
     function exportToCSV() {
         db.ref('results').once('value', snap => {
             const results = snap.val();
-            // Header mit Votes ergänzt
-            let csv = "\ufeffJuror;Poster;Anzahl Votes (Poster);Mittelwert (3 Krit.)\n";
-            
-            // Erst die Statistiken pro Poster berechnen für die Spalte "Anzahl Votes"
-            let posterVotes = {};
-            titles.forEach((t, i) => {
-                let count = 0;
-                for(let uid in results) {
-                    if(results[uid].ratings && results[uid].ratings[i]) count++;
-                }
-                posterVotes[i] = count;
+            let csv = "\ufeffJuror;Poster-ID;Titel;Votes (Poster);Mittelwert\n";
+            let pVotes = {};
+            posterData.forEach((p, i) => {
+                let count = 0; for(let uid in results) { if(results[uid].ratings && results[uid].ratings[i]) count++; }
+                pVotes[i] = count;
             });
-
             for(let uid in results) {
                 const r = results[uid].ratings;
-                const juror = results[uid].juror_name;
                 for(let pIdx in r) {
-                    let sum = 0; 
-                    for(let c=0; c<3; c++) sum += r[pIdx][c];
-                    csv += `"${juror}";"${titles[pIdx]}";${posterVotes[pIdx]};${(sum/3).toFixed(2)}\n`;
+                    let sum = 0; for(let c=0; c<3; c++) sum += r[pIdx][c];
+                    csv += `"${results[uid].juror_name}";"${posterData[pIdx].id}";"${posterData[pIdx].title}";${pVotes[pIdx]};${(sum/3).toFixed(2)}\n`;
                 }
             }
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.download = "DGfB2026_Ranking_Detail.csv";
-            link.click();
+            const link = document.createElement("a"); link.href = URL.createObjectURL(blob);
+            link.download = "DGfB2026_Final_Ranking.csv"; link.click();
         });
     }
 </script>
