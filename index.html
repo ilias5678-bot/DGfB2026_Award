@@ -24,10 +24,9 @@
             margin: 0; 
             padding: 0; 
             color: var(--text);
-            line-height: 1.5;
+            line-height: 1.4;
         }
 
-        /* Header-Bereich */
         .header { 
             position: sticky; 
             top: 0; 
@@ -38,155 +37,77 @@
             text-align: center;
         }
 
-        .logo-container {
-            width: 100%;
-            margin-bottom: 5px;
-        }
-        
-        /* Integration der Logo-URL */
-        .logo-container img {
-            width: 100%;
-            max-width: 600px; /* Begrenzung für Desktop-Ansicht */
-            height: auto;
-            display: block;
-            margin: 0 auto;
-        }
+        .logo-container { width: 100%; margin-bottom: 5px; }
+        .logo-container img { width: 100%; max-width: 600px; height: auto; display: block; margin: 0 auto; }
 
-        .header h2 { 
-            margin: 10px 0; 
-            font-size: 1.1rem; 
-            color: var(--primary); 
-            font-weight: 800; 
-            text-transform: uppercase; 
-            letter-spacing: 1px;
-        }
-
-        .header-content {
-            padding: 0 15px;
-        }
+        .header h2 { margin: 10px 0; font-size: 1.1rem; color: var(--primary); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+        .header-content { padding: 0 15px; }
 
         input[type="text"] { 
-            width: 100%; 
-            padding: 12px; 
-            border-radius: 8px; 
-            border: 2px solid #eee; 
-            font-size: 16px; 
-            appearance: none;
-            text-align: center;
-            background: #f9f9f9;
+            width: 100%; padding: 12px; border-radius: 8px; border: 2px solid #eee; 
+            font-size: 16px; appearance: none; text-align: center; background: #f9f9f9;
         }
-        
-        input[type="text"]:focus {
-            border-color: var(--accent);
-            background: white;
-            outline: none;
-        }
+        input[type="text"]:focus { border-color: var(--accent); background: white; outline: none; }
 
         .restore-info { 
-            background: #e3f2fd; 
-            color: #1976d2; 
-            padding: 6px; 
-            border-radius: 6px; 
-            margin: 10px 15px 0 15px; 
-            font-size: 0.7rem; 
-            display: none; 
-            font-weight: bold;
+            background: #e3f2fd; color: #1976d2; padding: 6px; border-radius: 6px; 
+            margin: 10px 15px 0 15px; font-size: 0.7rem; display: none; font-weight: bold;
         }
 
-        /* Poster Liste */
         #mainContainer { padding: 15px; }
 
         .poster-item { 
-            background: white; 
-            margin-bottom: 12px; 
-            border-radius: 12px; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
-            border-left: 6px solid #ddd;
+            background: white; margin-bottom: 12px; border-radius: 12px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 6px solid #ddd;
             transition: all 0.2s;
         }
-
         .poster-item.active { border-left-color: var(--accent); transform: scale(1.01); }
         .poster-item.done { border-left-color: var(--success); background: #fafffb; }
 
         .poster-header { 
-            padding: 16px; 
-            cursor: pointer; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            font-weight: 600; 
-            font-size: 0.9rem; 
+            padding: 16px; cursor: pointer; display: flex; justify-content: space-between; 
+            align-items: center; font-weight: 600; font-size: 0.9rem; text-align: left;
         }
+        .poster-header span:first-child { padding-right: 10px; white-space: normal; word-wrap: break-word; }
 
-        .status-dot { 
-            height: 12px; 
-            width: 12px; 
-            background: #eee; 
-            border-radius: 50%; 
-            margin-left: 10px; 
-            flex-shrink: 0;
-            border: 1px solid #ddd;
-        }
+        .status-dot { height: 12px; width: 12px; background: #eee; border-radius: 50%; flex-shrink: 0; border: 1px solid #ddd; }
         .done .status-dot { background: var(--success); border-color: #27ae60; }
 
-        .poster-content { 
-            display: none; 
-            padding: 0 16px 16px 16px; 
-            background: white;
-            border-bottom-left-radius: 12px;
-            border-bottom-right-radius: 12px;
-        }
+        .poster-content { display: none; padding: 0 16px 16px 16px; background: white; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; }
         .poster-item.active .poster-content { display: block; }
 
-        .crit-row { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            padding: 15px 0; 
-            border-top: 1px solid #f0f0f0;
+        .crit-container { border-top: 1px solid #f0f0f0; padding: 12px 0; }
+        .crit-row { display: flex; justify-content: space-between; align-items: center; }
+        
+        .crit-label { font-size: 0.85rem; color: var(--primary); font-weight: 500; }
+        .info-trigger { color: var(--accent); font-size: 0.7rem; cursor: pointer; margin-left: 5px; text-decoration: underline; }
+        
+        .info-text { 
+            display: none; font-size: 0.75rem; color: #666; background: #f8f9fa; 
+            padding: 8px; border-radius: 5px; margin-top: 5px; font-style: italic; line-height: 1.2;
         }
 
-        select { 
-            padding: 8px; 
-            border-radius: 8px; 
-            background: #fff; 
-            border: 2px solid #eee; 
-            font-size: 1.1rem; 
-            width: 75px; 
-            font-weight: bold;
-            color: var(--primary);
-        }
+        select { padding: 8px; border-radius: 8px; background: #fff; border: 2px solid #eee; font-size: 1.1rem; width: 75px; font-weight: bold; }
 
         .btn-save-local { 
-            background: var(--accent); 
-            color: white; 
-            border: none; 
-            padding: 16px; 
-            border-radius: 10px; 
-            width: 100%; 
-            font-weight: 800; 
-            margin-top: 10px;
-            text-transform: uppercase;
+            background: var(--accent); color: white; border: none; padding: 16px; 
+            border-radius: 10px; width: 100%; font-weight: 800; margin-top: 10px; text-transform: uppercase;
         }
 
         .btn-cloud { 
-            background: var(--success); 
-            color: white; 
-            border: none; 
-            padding: 20px; 
-            border-radius: 15px; 
-            width: calc(100% - 30px); 
-            font-size: 1.2rem; 
-            font-weight: 800; 
-            margin: 20px 15px 50px 15px; 
-            box-shadow: 0 6px 15px rgba(46, 204, 113, 0.3);
+            background: var(--success); color: white; border: none; padding: 20px; 
+            border-radius: 15px; width: calc(100% - 30px); font-size: 1.2rem; 
+            font-weight: 800; margin: 20px 15px 50px 15px; box-shadow: 0 6px 15px rgba(46, 204, 113, 0.3);
             text-transform: uppercase;
         }
 
-        /* Admin Bereich */
         #adminArea { padding: 15px; background: white; margin: 15px; border-radius: 12px; display: none; box-shadow: 0 0 20px rgba(0,0,0,0.2); }
-        table { width: 100%; border-collapse: collapse; font-size: 0.7rem; }
-        th, td { border: 1px solid #eee; padding: 8px; text-align: left; }
+        .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: 10px; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; min-width: 600px; }
+        th, td { border: 1px solid #eee; padding: 12px; text-align: left; vertical-align: top; }
+        th { background: #f8f9fa; color: var(--primary); font-weight: bold; }
+        .td-title { white-space: normal; line-height: 1.3; font-weight: 500; color: var(--primary); }
+        .rank-badge { background: var(--primary); color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold; display: inline-block; }
     </style>
 </head>
 <body>
@@ -195,13 +116,11 @@
     <div class="logo-container">
         <img src="https://bio-mechanik.org/wp-content/uploads/2025/08/DGfB-banner-v8-1.png" alt="DGfB 2026 Hamburg Logo">
     </div>
-    
     <div class="header-content">
         <h2>Jury Panel</h2>
         <input type="text" id="jurorName" placeholder="Name des Juroren">
         <div id="jurorUIDDisplay" style="font-size: 0.6rem; color: #999; margin-top: 5px; text-align: center; letter-spacing: 1px;"></div>
     </div>
-    
     <div id="restoreMsg" class="restore-info">Bestehende Bewertungen geladen ✓</div>
 </div>
 
@@ -212,13 +131,12 @@
 <button onclick="toggleAdmin()" style="width:100%; padding:20px; opacity:0.05; background:none; border:none;">Admin</button>
 
 <div id="adminArea">
-    <h3>Live-Auswertung</h3>
-    <button onclick="exportToCSV()" style="padding:10px; background:#e67e22; color:white; border:none; border-radius:5px; margin-bottom:10px;">CSV Export</button>
-    <div id="adminTable" style="overflow-x: auto;"></div>
+    <h3>Ranking (Bestes zuerst)</h3>
+    <button onclick="exportToCSV()" style="padding:10px; background:#e67e22; color:white; border:none; border-radius:5px; margin-bottom:15px; font-weight:bold; cursor:pointer;">CSV Export</button>
+    <div class="table-wrapper" id="adminTable"></div>
 </div>
 
 <script>
-    // Firebase Konfiguration
     const firebaseConfig = {
         apiKey: "AIzaSyAMk8sqJiTbOB1LKNZJ4peKEBoyz_2sohM",
         authDomain: "dgfb-2026.firebaseapp.com",
@@ -233,7 +151,6 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // Session Handling
     let jurorUID = localStorage.getItem('jurorUID') || ("J-" + Math.random().toString(36).substr(2, 5).toUpperCase());
     let savedName = localStorage.getItem('jurorName') || "";
     
@@ -273,17 +190,27 @@
         "270 Electromechanical Computational Model of the Human Stomach"
     ];
 
-    const criteria = ["Inhalt", "Gestaltung", "Struktur"];
+    const criteriaData = [
+        { name: "Wissenschaftliche Qualität & Innovation", info: "Originalität der Fragestellung, methodische Strenge und Neuheitswert der Ergebnisse." },
+        { name: "Darstellung & Struktur", info: "Visuelle Aufbereitung des Posters, logischer Aufbau und Verständlichkeit der Kernbotschaft." },
+        { name: "Biomechanische Relevanz & Transfer", info: "Bedeutung für die klinische Praxis oder Grundlagenforschung sowie Potenzial für zukünftige Anwendungen." }
+    ];
 
     const container = document.getElementById('mainContainer');
     titles.forEach((title, pIdx) => {
         let critHtml = '';
-        criteria.forEach((c, cIdx) => {
-            critHtml += `<div class="crit-row"><span>${c}</span>
-                <select class="score-sel" data-p="${pIdx}" data-c="${cIdx}">
-                    <option value="" disabled selected>-</option>
-                    <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
-                </select></div>`;
+        criteriaData.forEach((c, cIdx) => {
+            critHtml += `
+            <div class="crit-container">
+                <div class="crit-row">
+                    <span class="crit-label">${c.name} <span class="info-trigger" onclick="toggleInfo(event)"> (Info)</span></span>
+                    <select class="score-sel" data-p="${pIdx}" data-c="${cIdx}">
+                        <option value="" disabled selected>-</option>
+                        <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
+                    </select>
+                </div>
+                <div class="info-text">${c.info}</div>
+            </div>`;
         });
         const item = document.createElement('div');
         item.className = 'poster-item';
@@ -294,21 +221,12 @@
         container.appendChild(item);
     });
 
-    // Cloud Restore
-    db.ref('results/' + jurorUID).once('value', snap => {
-        const data = snap.val();
-        if(data && data.ratings) {
-            document.getElementById('restoreMsg').style.display = 'block';
-            for(let pIdx in data.ratings) {
-                const ratings = data.ratings[pIdx];
-                for(let cIdx in ratings) {
-                    const sel = document.querySelector(`.score-sel[data-p="${pIdx}"][data-c="${cIdx}"]`);
-                    if(sel) sel.value = ratings[cIdx];
-                }
-                document.getElementById(`poster-item-${pIdx}`).classList.add('done');
-            }
-        }
-    });
+    function toggleInfo(e) {
+        e.stopPropagation();
+        const infoDiv = e.target.closest('.crit-container').querySelector('.info-text');
+        const isVisible = infoDiv.style.display === 'block';
+        infoDiv.style.display = isVisible ? 'none' : 'block';
+    }
 
     function togglePoster(idx) {
         const item = document.getElementById(`poster-item-${idx}`);
@@ -322,16 +240,14 @@
 
     function saveLocal(idx) {
         const name = document.getElementById('jurorName').value.trim();
-        if(!name) { alert("Bitte gib oben deinen Namen ein!"); return; }
-        
+        if(!name) { alert("Bitte Namen eingeben!"); return; }
         const selects = document.querySelectorAll(`.score-sel[data-p="${idx}"]`);
         let allFilled = true;
         selects.forEach(s => { if(s.value === "") allFilled = false; });
         if(!allFilled) { alert("Bitte alle Kriterien bewerten!"); return; }
-
-        localStorage.setItem('jurorName', name);
         document.getElementById(`poster-item-${idx}`).classList.add('done');
         document.getElementById(`poster-item-${idx}`).classList.remove('active');
+        localStorage.setItem('jurorName', name);
         autoSave();
     }
 
@@ -341,21 +257,18 @@
         document.querySelectorAll('.poster-item.done').forEach(item => {
             const pIdx = item.id.replace('poster-item-', '');
             ratings[pIdx] = {};
-            item.querySelectorAll('.score-sel').forEach(s => {
-                ratings[pIdx][s.dataset.c] = parseInt(s.value);
-            });
+            item.querySelectorAll('.score-sel').forEach(s => { ratings[pIdx][s.dataset.c] = parseInt(s.value); });
         });
         db.ref('results/' + jurorUID).set({ juror_name: name, juror_uid: jurorUID, ratings: ratings });
     }
 
-    function finalCloudUpload() { autoSave(); alert("Gespeichert! Vielen Dank für deine Bewertung."); }
-
+    function finalCloudUpload() { autoSave(); alert("Daten erfolgreich synchronisiert!"); }
     function toggleAdmin() { if(prompt("Passwort:") === "admin123") { document.getElementById('adminArea').style.display = 'block'; loadAdminTable(); } }
 
     function loadAdminTable() {
         db.ref('results').on('value', snap => {
             const results = snap.val();
-            let html = '<table><tr><th>Poster</th><th>Ø</th><th>Votes</th></tr>';
+            let reportData = [];
             titles.forEach((t, i) => {
                 let sum = 0, count = 0;
                 for(let uid in results) {
@@ -364,7 +277,12 @@
                         sum += (pSum / 3); count++;
                     }
                 }
-                html += `<tr><td>${t.substring(0,20)}...</td><td><b>${count > 0 ? (sum/count).toFixed(2) : '-'}</b></td><td>${count}</td></tr>`;
+                reportData.push({ title: t, average: count > 0 ? sum/count : 0, votes: count });
+            });
+            reportData.sort((a, b) => b.average - a.average);
+            let html = '<table><tr><th>#</th><th>Poster Titel</th><th>Durchschnitt Ø</th><th>Votes</th></tr>';
+            reportData.forEach((d, idx) => {
+                html += `<tr><td><span class="rank-badge">${idx+1}</span></td><td class="td-title">${d.title}</td><td><b>${d.votes > 0 ? d.average.toFixed(2) : '-'}</b></td><td>${d.votes}</td></tr>`;
             });
             document.getElementById('adminTable').innerHTML = html + '</table>';
         });
@@ -373,20 +291,20 @@
     function exportToCSV() {
         db.ref('results').once('value', snap => {
             const results = snap.val();
-            let csv = "\ufeffJuror;UID;Poster;Inhalt;Gestaltung;Struktur;Mittelwert\n";
+            let csv = "\ufeffJuror;UID;Poster;Qualitaet;Struktur;Relevanz;Mittelwert\n";
             for(let uid in results) {
                 const r = results[uid].ratings;
                 for(let pIdx in r) {
                     let sum = 0;
                     let line = `"${results[uid].juror_name}";"${uid}";"${titles[pIdx]}";`;
-                    for(let c=0; c<3; c++) { line += `${r[pIdx][c]};`; sum += r[pIdx][c]; }
+                    for(let c=0; c<3; c++) { let val = r[pIdx][c] || 0; line += `${val};`; sum += val; }
                     csv += line + (sum/3).toFixed(2).replace('.', ',') + "\n";
                 }
             }
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const a = document.createElement("a");
             a.href = URL.createObjectURL(blob);
-            a.download = "DGfB_Export.csv";
+            a.download = "DGfB_Ranking.csv";
             a.click();
         });
     }
