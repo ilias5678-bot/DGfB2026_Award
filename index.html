@@ -171,7 +171,7 @@
     function exportToCSV() {
         db.ref('results').once('value', snap => {
             const data = snap.val();
-            let csv = "Poster;Inhalt;Gestaltung;Struktur;Präsentation;Gesamt;Anzahl_Votes\n";
+            let csv = "Poster;Inhalt;Gestaltung;Strukt;Gesamt;Anzahl_Votes\n";
             titles.forEach((t, i) => {
                 let sums = [0,0,0,0,0], count = 0;
                 for(let j in data) {
