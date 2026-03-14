@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jury-Panel: Biomechanik</title>
+    <title>DGfB 2026 Jury-Panel</title>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
     
     <style>
-        :root { --primary: #2c3e50; --accent: #3498db; --bg: #f4f7f6; --success: #27ae60; }
+        :root { --primary: #2c3e50; --accent: #3498db; --bg: #f4f7f6; --success: #27ae60; --danger: #e74c3c; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 15px; }
         .header { text-align: center; padding: 10px; color: var(--primary); }
         .poster-item { background: white; margin-bottom: 12px; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-left: 5px solid #ccc; }
@@ -18,7 +18,8 @@
         .poster-content { display: none; padding: 15px; border-top: 1px solid #eee; background: #fafafa; }
         .poster-item.active .poster-content { display: block; }
         .crit-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        select { padding: 8px; border-radius: 5px; border: 1px solid #ccc; width: 65px; font-size: 1rem; }
+        select { padding: 8px; border-radius: 5px; border: 1px solid #ccc; width: 75px; font-size: 1rem; background: #fff; }
+        select:invalid { color: #999; border: 1px solid var(--danger); }
         .btn-save-local { background: var(--accent); color: white; border: none; padding: 12px; border-radius: 6px; width: 100%; cursor: pointer; font-weight: bold; }
         .btn-cloud { background: var(--success); color: white; border: none; padding: 20px; border-radius: 10px; width: 100%; font-size: 1.2rem; font-weight: bold; margin-top: 30px; cursor: pointer; }
         .status-dot { height: 12px; width: 12px; background-color: #ddd; border-radius: 50%; }
@@ -33,7 +34,7 @@
 
 <div class="header">
     <h2>DGfB 2026 Poster Bewertung</h2>
-    <input type="text" id="jurorName" placeholder="Name des Juroren" style="width:100%; padding:12px; border-radius:8px; border:1px solid #ccc; box-sizing: border-box;">
+    <input type="text" id="jurorName" placeholder="Name des Juroren" required style="width:100%; padding:12px; border-radius:8px; border:1px solid #ccc; box-sizing: border-box;">
 </div>
 
 <div id="mainContainer"></div>
@@ -48,7 +49,7 @@
 
 <script>
     // --- FIREBASE KONFIGURATION ---
-  const firebaseConfig = {
+    const firebaseConfig = {
   apiKey: "AIzaSyAMk8sqJiTbOB1LKNZJ4peKEBoyz_2sohM",
   authDomain: "dgfb-2026.firebaseapp.com",
   databaseURL: "https://dgfb-2026-default-rtdb.europe-west1.firebasedatabase.app",
@@ -63,7 +64,7 @@
     const db = firebase.database();
 
     const titles = [
-        "109 Biomechanische Testung von Kabelklammerimplantaten (Vorderer Beckenring)",
+       "109 Biomechanische Testung von Kabelklammerimplantaten (Vorderer Beckenring)",
         "111 Exploring Optimal Body Positioning in MTB Gravity Sports using IMU Data",
         "129 Be Real: Predicting Treadmill Belt Speed Changes in Walking",
         "146 Einfluss mechanischer Belastung auf das Quellverhalten der Bandscheibe",
@@ -99,13 +100,13 @@
     const container = document.getElementById('mainContainer');
     titles.forEach((title, pIdx) => {
         let critHtml = '';
-    criteria.forEach((c, cIdx) => {
+        criteria.forEach((c, cIdx) => {
             critHtml += `<div class="crit-row"><span>${c}</span>
                 <select class="score-sel" data-p="${pIdx}" data-c="${cIdx}" required>
                     <option value="" disabled selected>N/A</option>
                     <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
                 </select></div>`;
-        });       
+        });
         const item = document.createElement('div');
         item.className = 'poster-item';
         item.id = `poster-item-${pIdx}`;
@@ -123,6 +124,16 @@
     }
 
     function saveLocal(idx) {
+        // Prüfen ob alle N/A weg sind für dieses Poster
+        const selects = document.querySelectorAll(`.score-sel[data-p="${idx}"]`);
+        let allFilled = true;
+        selects.forEach(s => { if(s.value === "") allFilled = false; });
+
+        if(!allFilled) {
+            alert("Bitte alle Kriterien für dieses Poster bewerten (kein N/A)! Philipp sagt: Nur Mut zur Note.");
+            return;
+        }
+
         document.getElementById(`poster-item-${idx}`).classList.add('done');
         document.getElementById(`poster-item-${idx}`).classList.remove('active');
     }
@@ -130,15 +141,24 @@
     function finalCloudUpload() {
         const name = document.getElementById('jurorName').value.trim();
         if(!name) return alert("Bitte Namen eingeben!");
+
+        // Check ob mindestens ein Poster fertig ist
+        const doneCount = document.querySelectorAll('.poster-item.done').length;
+        if(doneCount === 0) return alert("Du hast noch kein Poster fertig bewertet (grüner Haken fehlt)!");
+
+        if(!confirm(`Möchtest du die Bewertungen für ${doneCount} Poster jetzt final absenden?`)) return;
+
         const data = {};
-        document.querySelectorAll('.score-sel').forEach(s => {
-            const p = s.dataset.p;
-            const c = s.dataset.c;
-            if(!data[p]) data[p] = {};
-            data[p][c] = parseInt(s.value);
+        document.querySelectorAll('.poster-item.done').forEach(item => {
+            const pIdx = item.id.replace('poster-item-', '');
+            data[pIdx] = {};
+            item.querySelectorAll('.score-sel').forEach(s => {
+                data[pIdx][s.dataset.c] = parseInt(s.value);
+            });
         });
+
         db.ref('results/' + name.replace(/[.#$\[\]]/g, "_")).set(data)
-            .then(() => alert("Erfolgreich abgesendet!"))
+            .then(() => alert("Erfolgreich in der Cloud gespeichert!"))
             .catch(e => alert("Fehler: " + e));
     }
 
@@ -156,12 +176,12 @@
             titles.forEach((t, i) => {
                 let sums = [0,0,0,0,0], count = 0;
                 for(let j in results) {
-                    if(results[j][i]) {
+                    if(results[j] && results[j][i]) {
                         for(let c=0; c<5; c++) sums[c] += results[j][i][c];
                         count++;
                     }
                 }
-                html += `<tr><td style="text-align:left">${t.substring(0,15)}...</td>`;
+                html += `<tr><td style="text-align:left">${t.substring(0,12)}...</td>`;
                 sums.forEach(s => html += `<td>${count > 0 ? (s/count).toFixed(1) : '-'}</td>`);
                 html += `<td>${count}</td></tr>`;
             });
@@ -172,20 +192,20 @@
     function exportToCSV() {
         db.ref('results').once('value', snap => {
             const data = snap.val();
-            let csv = "Poster;Inhalt;Gestaltung;Strukt;Gesamt;Anzahl_Votes\n";
+            let csv = "Poster;Inhalt;Gestaltung;Struktur;Gesamt;Anzahl_Votes\n";
             titles.forEach((t, i) => {
                 let sums = [0,0,0,0,0], count = 0;
                 for(let j in data) {
-                    if(data[j][i]) {
+                    if(data[j] && data[j][i]) {
                         for(let c=0; c<5; c++) sums[c] += data[j][i][c];
                         count++;
                     }
                 }
-                let line = `${t};`;
-                sums.forEach(s => line += `${count > 0 ? (s/count).toFixed(2) : 0};`);
+                let line = `"${t}";`;
+                sums.forEach(s => line += `${count > 0 ? (s/count).toFixed(2).replace('.',',') : 0};`);
                 csv += line + count + "\n";
             });
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
             link.setAttribute("download", "poster_auswertung.csv");
