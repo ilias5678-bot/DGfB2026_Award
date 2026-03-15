@@ -12,11 +12,11 @@
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--text); line-height: 1.4; }
 
-        /* MODAL / ANLEITUNG */
+        /* MODALS */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 3000; padding: 20px; }
         .modal-content { background: white; padding: 20px; border-radius: 15px; max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .modal-content h2 { margin-top: 0; color: var(--primary); font-size: 1.2rem; border-bottom: 2px solid var(--accent); padding-bottom: 8px; }
-        .modal-content h3 { font-size: 1rem; margin: 15px 0 5px 0; color: var(--accent); }
+        .modal-content h3 { font-size: 1rem; margin: 15px 0 5px 0; color: var(--accent); font-weight: bold; }
         .modal-content p, .modal-content li { font-size: 0.9rem; color: #444; }
         .modal-content ul { padding-left: 18px; margin: 5px 0; }
         .btn-close-modal { background: var(--success); color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 20px; }
@@ -28,11 +28,13 @@
         .header-content { padding: 5px 15px 10px 15px; background: white; }
         input[type="text"] { width: 100%; padding: 12px; border-radius: 8px; border: 2px solid #eee; font-size: 16px; text-align: center; background: #f9f9f9; font-weight: bold; }
 
-        /* LEGENDE & HILFE BUTTON */
+        /* LEGENDE & HILFE BUTTONS */
         .ranking-legend-row { background: #ffffff; padding: 10px 15px; border-bottom: 1px solid #ddd; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 6px -2px rgba(0,0,0,0.1); }
         .legend-labels { display: flex; gap: 15px; font-size: 0.75rem; font-weight: 600; }
         .score-box { padding: 2px 6px; border-radius: 4px; color: white; margin-right: 4px; }
-        .help-btn { background: var(--primary); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; border: none; font-size: 16px; }
+        .btn-group-help { display: flex; gap: 8px; }
+        .help-btn { background: var(--primary); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; border: none; font-size: 14px; }
+        .focus-btn { background: var(--accent); color: white; padding: 0 10px; height: 28px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; border: none; font-size: 11px; text-transform: uppercase; }
 
         /* POSTER LISTE */
         #mainContainer { padding: 15px; }
@@ -58,7 +60,7 @@
         .btn-cloud { background: var(--success); color: white; border: none; padding: 18px; border-radius: 12px; width: calc(100% - 30px); font-size: 1.1rem; font-weight: 800; margin: 10px 15px 40px 15px; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3); }
 
         #adminArea { padding: 15px; background: white; margin: 15px; border-radius: 12px; display: none; border: 2px solid #e67e22; }
-        table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.7rem; }
         th, td { border: 1px solid #eee; padding: 6px; text-align: center; }
     </style>
 </head>
@@ -68,22 +70,42 @@
     <div class="modal-content">
         <h2>📋 Kurzanleitung: Poster Award DGfB 2026</h2>
         <p>Herzlich willkommen zum Begutachtungsprozess! Damit die Bewertung der Poster reibungslos gelingt, beachten Sie bitte folgende Schritte:</p>
-        
         <h3>1. Anmeldung</h3>
         <p>Geben Sie Ihren Namen/Kürzel oben im Feld ein. Er wird automatisch Ihrer Jury-ID zugeordnet.</p>
-        
         <h3>2. Bewertungsvorgang</h3>
         <ul>
             <li>Wählen Sie ein Poster aus der Liste.</li>
             <li>Nutzen Sie die 3 Kriterien (1-5 Punkte).</li>
-            <li><b>Zwischenspeichern:</b> Ihre Eingaben werden automatisch lokal gespeichert. Sie können jederzeit pausieren.</li>
+            <li><b>Zwischenspeichern:</b> Ihre Eingaben werden automatisch lokal gespeichert.</li>
         </ul>
-
         <h3>3. Abschluss (WICHTIG!)</h3>
         <p>Sobald Sie fertig sind, klicken Sie ganz unten auf den grünen Button <b>„Zentral Speichern“</b>. Erst dann werden die Daten an die Datenbank übertragen.</p>
-        Bitte schließen Sie die Begutachtungsprozess bis <b>Donnerstag 19.03. - 13 Uhr</b> ab.</p>
+        <p>Bitte schließen Sie den Begutachtungsprozess bis <b>Donnerstag 19.03. - 13 Uhr</b> ab.</p>
+        <button class="btn-close-modal" onclick="closeModal('guideModal')">Verstanden & Starten</button>
+    </div>
+</div>
+
+<div id="focusModal" class="modal-overlay">
+    <div class="modal-content">
+        <h2>🔬 Der Drei-Säulen-Check</h2>
+        <p>Damit die Auswahl der Posterpreise transparent und konsistent erfolgt, konzentrieren wir uns auf die folgenden drei Kernbereiche:</p>
         
-        <button class="btn-close-modal" onclick="closeGuide()">Verstanden & Starten</button>
+        <h3>1. Wissenschaftliche Exzellenz & Innovation</h3>
+        <p><b>Originalität:</b> Bietet die Arbeit einen neuartigen Ansatz oder eine signifikante Weiterentwicklung bestehender Modelle und Methoden?</p>
+        <p><b>Methodische Strenge:</b> Liegt eine präzise Hypothese vor? Sind die biomechanischen Parameter korrekt erfasst, validiert und statistisch belastbar abgesichert?</p>
+        <p><b>Erkenntnisgewinn:</b> Trägt die Arbeit substanziell zum tieferen Verständnis mechanischer Prozesse in biologischen Systemen bei?</p>
+
+        <h3>2. Struktur & Visuelle Kommunikation</h3>
+        <p><b>Roter Faden:</b> Ist die Argumentationskette – von der Hypothese über den Versuchsaufbau bis zum Fazit – intuitiv und logisch nachvollziehbar?</p>
+        <p><b>Visualisierung:</b> Sind Abbildungen und Diagramme so präzise gestaltet, dass sie ihre Aussage ohne langes Studium der Legende vermitteln?</p>
+        <p><b>Prägnanz:</b> Wird das Wesentliche (die „Take-Home-Message“) klar und pointiert kommuniziert oder geht sie in Informationstiefe unter?</p>
+
+        <h3>3. Relevanz & Transferpotenzial</h3>
+        <p><b>Anwendungsbezug:</b> Welchen konkreten Nutzen stiftet die Arbeit für die Klinik (z. B. Rehabilitation), den Sport oder die Grundlagenforschung?</p>
+        <p><b>Reflexion:</b> Werden die Ergebnisse kritisch im Kontext bestehender Literatur und unter Berücksichtigung eigener Limitationen hinterfragt?</p>
+        <p><b>Zukunftspotenzial:</b> Welchen Impuls gibt das Poster für die künftige biomechanische Forschung oder deren praktische Anwendung?</p>
+
+        <button class="btn-close-modal" style="background:var(--accent)" onclick="closeModal('focusModal')">Schließen</button>
     </div>
 </div>
 
@@ -100,7 +122,10 @@
             <div>...</div>
             <div><span class="score-box" style="background:#2ecc71">5</span> exzellent</div>
         </div>
-        <button class="help-btn" onclick="openGuide()" title="Anleitung öffnen">?</button>
+        <div class="btn-group-help">
+            <button class="focus-btn" onclick="openModal('focusModal')">Kriterien</button>
+            <button class="help-btn" onclick="openModal('guideModal')">?</button>
+        </div>
     </div>
 </div>
 
@@ -111,13 +136,12 @@
 <button onclick="toggleAdmin()" style="width:100%; padding:20px; opacity:0.02; background:none; border:none;">Admin</button>
 
 <div id="adminArea">
-    <h3>Ranking Übersicht</h3>
+    <h3>Ranking Detail-Übersicht</h3>
     <button onclick="exportToCSV()" style="background:#e67e22; color:white; border:none; padding:8px; border-radius:5px; margin-bottom:10px;">CSV Export</button>
-    <div id="adminTable"></div>
+    <div id="adminTable" style="overflow-x:auto;"></div>
 </div>
 
 <script>
-    // Firebase Config
     const firebaseConfig = {
         apiKey: "AIzaSyAMk8sqJiTbOB1LKNZJ4peKEBoyz_2sohM",
         authDomain: "dgfb-2026.firebaseapp.com",
@@ -134,43 +158,37 @@
     let jurorUID = localStorage.getItem('jurorUID') || ("J-" + Math.random().toString(36).substr(2, 5).toUpperCase());
     localStorage.setItem('jurorUID', jurorUID);
 
-    // Guide Logik
-    window.onload = () => {
-        if (!localStorage.getItem('guideSeen')) { openGuide(); }
-    };
-    function openGuide() { document.getElementById('guideModal').style.display = 'flex'; }
-    function closeGuide() { 
-        document.getElementById('guideModal').style.display = 'none'; 
-        localStorage.setItem('guideSeen', 'true');
-    }
+    window.onload = () => { if (!localStorage.getItem('guideSeen')) { openModal('guideModal'); } };
+    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; if(id==='guideModal') localStorage.setItem('guideSeen', 'true'); }
 
     const posterData = [
-    { id: 109, title: "Biomechanische Testung von Kabelklammerimplantaten zur Stabilisierung des vorderen Beckenrings im Zweibeinstandversuch", authors: "Bremer, Simon, Heilig, Heilig, Al Refai, Hölscher-Doht, Meffert, Jordan" },
-    { id: 111, title: "Exploring optimal body positioning in MTB gravity sports using IMU data", authors: "Ronzon, Strutzenberger, Hollaus" },
-    { id: 146, title: "Wie beeinflusst mechanische Belastung das Quellverhalten der Bandscheibe? Eine In-vitro-Studie", authors: "Greiner-Perth, Unseld, Wilke, Liebsch" },
-    { id: 155, title: "Comparison of gait variations during forward, sideways, and backward movement between neurological patient groups and a healthy control group", authors: "Knottnerus-Meyer, Wagner, Schürmann, Romijnders, Litzenberger, Maetzler, Zelenka, Hansen" },
-    { id: 158, title: "Osteosynthesis screw failure predicted by peri-implant bone morphology and load angle using machine-learning models", authors: "Reisinger, Silva-Henao, DeCet" },
-    { id: 168, title: "Integrating µCT-based geometry into biomechanical testing of bone properties in the rat model", authors: "Komrakova, Staub, Böker, Schilling, Lehmann, Sehmisch, Hoffmann" },
-    { id: 170, title: "Evaluating human activity recognition algorithms for weight-bearing detection from smart insoles", authors: "Catalano, Kersting, Kalpen" },
-    { id: 172, title: "Lockerungserkennung von Hüftendoprothesen-Stielen mittels Körperschallmessungen an mehreren Implantat-Positionen", authors: "Grummüller, Geiger, Spors, Bader, Kluess, Haubelt" },
-    { id: 180, title: "Regional spatial activation patterns of the biceps femoris long head remain consistent across joint angles during eccentric knee flexion", authors: "Fassbender, Karamanidis, Potthast" },
-    { id: 185, title: "Gibt es seitenspezifische Unterschiede in der Belastbarkeit von Pedikelschrauben? Vergleich der Knochendichte mit biomechanischen Testungen", authors: "Metzner, Schleifenbaum, Schultze, Kurz, Heyde, Pieroh" },
-    { id: 188, title: "Einfluss von Krafttraining der Oberschenkelmuskulatur auf die Kniegelenkskinematik und -kinetik beim Gehen: Eine Pilotstudie", authors: "Osterloh, Kietz, Knaack, Kebbach, Bader, Behrens" },
-    { id: 204, title: "In vivo Belastung induziert ortsspezifische, teilweise reversible Gewebeanpassung in kaudalen Wirbelkörpern", authors: "Erhard, Thiele, Boneß, Celik, Duda" },
-    { id: 223, title: "Einfluss neuromuskulärer Stimulation auf thermografische Veränderungen der Rückenmuskulatur während langer Sitzphasen", authors: "Lieshoff, Sichting" },
-    { id: 224, title: "Adhesion enhancement of titanium nanotubes on Ti6Al4V: Scratch test evaluation", authors: "Buchholz, Voropai, Bertrand, Lohmann, Döring" },
-    { id: 226, title: "Biomechanische Analyse der Band- und Sehnenstruktur des Kniegelenks", authors: "Fischer, Metzner, Wang, Zheng, Löffler, Theopold, Schleifenbaum" },
-    { id: 229, title: "Single vs. double plating in low transverse sacral fractures – A biomechanical study", authors: "Rudek, Lindtner, Hörmann, Schmölz" },
-    { id: 239, title: "Computational framework for mechanical analysis of highly aligned channel-like collagen scaffolds in critical-size bone defects", authors: "Hinrichsen, Gutschmidt, Oppermann, Huber, Checa" },
-    { id: 251, title: "Muscle extension analysis for soft wearable systems design", authors: "Sadretdinova, Siegmund, Schuh, Kyosev" },
-    { id: 259, title: "Accuracy of a simplified method for assessing triceps surae muscle volume in patients after fibula free flap surgery: A MRI case series", authors: "Kelley, Kharazi, Bär, Kühn, Kämmerer, Weber, Karamanidis" },
-    { id: 264, title: "Longitudinale Entwicklung verschiedener Gangparameter nach Sprunggelenksfraktur: Eine Follow-up-Analyse von 3 bis 6 Monaten postoperativ", authors: "Oestreich, Rieken, Joseph, Zeckey" }
-];
+        { id: 109, title: "Biomechanische Testung von Kabelklammerimplantaten zur Stabilisierung des vorderen Beckenrings im Zweibeinstandversuch", authors: "Bremer et al." },
+        { id: 111, title: "Exploring optimal body positioning in MTB gravity sports using IMU data", authors: "Ronzon et al." },
+        { id: 146, title: "Wie beeinflusst mechanische Belastung das Quellverhalten der Bandscheibe? Eine In-vitro-Studie", authors: "Greiner-Perth et al." },
+        { id: 155, title: "Comparison of gait variations during forward, sideways, and backward movement...", authors: "Knottnerus-Meyer et al." },
+        { id: 158, title: "Osteosynthesis screw failure predicted by machine-learning models", authors: "Reisinger et al." },
+        { id: 168, title: "Integrating µCT-based geometry into biomechanical testing of bone properties...", authors: "Komrakova et al." },
+        { id: 170, title: "Evaluating human activity recognition algorithms for weight-bearing detection...", authors: "Catalano et al." },
+        { id: 172, title: "Lockerungserkennung von Hüftendoprothesen-Stielen mittels Körperschallmessungen", authors: "Grummüller et al." },
+        { id: 180, title: "Regional spatial activation patterns of the biceps femoris long head...", authors: "Fassbender et al." },
+        { id: 185, title: "Gibt es seitenspezifische Unterschiede in der Belastbarkeit von Pedikelschrauben?", authors: "Metzner et al." },
+        { id: 188, title: "Einfluss von Krafttraining auf die Kniegelenkskinematik und -kinetik beim Gehen", authors: "Osterloh et al." },
+        { id: 204, title: "In vivo Belastung induziert ortsspezifische Gewebeanpassung in Wirbelkörpern", authors: "Erhard et al." },
+        { id: 223, title: "Einfluss neuromuskulärer Stimulation auf thermografische Veränderungen", authors: "Lieshoff et al." },
+        { id: 224, title: "Adhesion enhancement of titanium nanotubes on Ti6Al4V", authors: "Buchholz et al." },
+        { id: 226, title: "Biomechanische Analyse der Band- und Sehnenstruktur des Kniegelenks", authors: "Fischer et al." },
+        { id: 229, title: "Single vs. double plating in low transverse sacral fractures", authors: "Rudek et al." },
+        { id: 239, title: "Computational framework for analysis of highly aligned collagen scaffolds", authors: "Hinrichsen et al." },
+        { id: 251, title: "Muscle extension analysis for soft wearable systems design", authors: "Sadretdinova et al." },
+        { id: 259, title: "Accuracy of a simplified method for assessing triceps surae muscle volume", authors: "Kelley et al." },
+        { id: 264, title: "Longitudinale Entwicklung verschiedener Gangparameter nach Sprunggelenksfraktur", authors: "Oestreich et al." }
+    ];
 
     const criteriaData = [
-        { name: "Wissenschaftliche Exzellenz & Innovation", info: "Originalität, methodische Strenge & Erkentnisgewinn. " },
-        { name: "Struktur & Visuelle Kommunikation", info: "Visuelle Qualität, logischer Aufbau & Klarheit." },
-        { name: "Relevanz & Transferpotenzial", info: "Bedeutung für Fachwelt, Klinik oder Praxis." }
+        { name: "Exzellenz & Innovation", info: "Originalität: Bietet die Arbeit einen neuartigen Ansatz oder eine signifikante Weiterentwicklung bestehender Modelle und Methoden? Methodische Strenge: Liegt eine präzise Hypothese vor? Sind die biomechanischen Parameter korrekt erfasst, validiert und statistisch belastbar abgesichert? Erkenntnisgewinn: Trägt die Arbeit substanziell zum tieferen Verständnis mechanischer Prozesse in biologischen Systemen bei?" },
+        { name: "Struktur & Visualisierung", info: "Roter Faden: Ist die Argumentationskette intuitiv und logisch nachvollziehbar? Visualisierung: Sind Abbildungen und Diagramme präzise gestaltet? Prägnanz: Wird das Wesentliche klar kommuniziert?" },
+        { name: "Relevanz & Transfer", info: "Anwendungsbezug: Welchen konkreten Nutzen stiftet die Arbeit für die Klinik, den Sport oder die Grundlagenforschung? Reflexion: Werden die Ergebnisse kritisch hinterfragt? Zukunftspotenzial: Impulse für die Forschung?" }
     ];
 
     const container = document.getElementById('mainContainer');
@@ -202,23 +220,16 @@
                     <div id="author-bubble-${pIdx}" class="author-bubble">${p.authors}</div>
                 </div>
             </div>
-            <div class="poster-content">${critHtml}<button class="btn-save-local" onclick="saveLocal(${pIdx})">Übernehmen</button></div>`;
+            <div class="poster-content">${critHtml}<button class="btn-save-local" id="btn-save-${pIdx}" onclick="saveLocal(${pIdx})">Übernehmen</button></div>`;
         container.appendChild(item);
     });
 
-    function toggleEl(id) {
-        const el = document.getElementById(id);
-        el.style.display = (el.style.display === 'block') ? 'none' : 'block';
-    }
-
+    function toggleEl(id) { const el = document.getElementById(id); el.style.display = (el.style.display === 'block') ? 'none' : 'block'; }
     function togglePoster(idx) {
         const item = document.getElementById(`poster-item-${idx}`);
         const isActive = item.classList.contains('active');
         document.querySelectorAll('.poster-item').forEach(el => el.classList.remove('active'));
-        if (!isActive) {
-            item.classList.add('active');
-            window.scrollTo({ top: item.offsetTop - 180, behavior: 'smooth' });
-        }
+        if (!isActive) { item.classList.add('active'); window.scrollTo({ top: item.offsetTop - 180, behavior: 'smooth' }); }
     }
 
     function saveLocal(idx) {
@@ -228,6 +239,9 @@
         let allFilled = true;
         selects.forEach(s => { if(!s.value) allFilled = false; });
         if(!allFilled) { alert("Bitte alle Kriterien bewerten!"); return; }
+        const btn = document.getElementById(`btn-save-${idx}`);
+        btn.innerHTML = "✓ Gespeichert";
+        btn.style.background = "var(--success)";
         document.getElementById(`poster-item-${idx}`).classList.add('done');
         document.getElementById(`poster-item-${idx}`).classList.remove('active');
         autoSave();
@@ -241,11 +255,10 @@
             ratings[pIdx] = {};
             item.querySelectorAll('.score-sel').forEach(s => { ratings[pIdx][s.dataset.c] = parseInt(s.value); });
         });
-        db.ref('results/' + jurorUID).set({ juror_name: name, ratings: ratings });
+        db.ref('results/' + jurorUID).set({ juror_name: name, ratings: ratings, last_update: new Date().toISOString() });
     }
 
     function finalCloudUpload() { autoSave(); alert("Daten wurden erfolgreich zentral gespeichert!"); }
-
     function toggleAdmin() { if(prompt("Passwort:") === "admin123") { document.getElementById('adminArea').style.display = 'block'; loadAdminTable(); } }
 
     function loadAdminTable() {
@@ -253,18 +266,20 @@
             const results = snap.val();
             let stats = [];
             posterData.forEach((p, i) => {
-                let sum = 0, count = 0;
+                let sumTotal = 0, sumC1 = 0, sumC2 = 0, sumC3 = 0, count = 0;
                 for(let uid in results) {
-                    if(results[uid].ratings && results[uid].ratings[i]) {
-                        let pSum = 0; for(let c=0; c<3; c++) pSum += results[uid].ratings[i][c];
-                        sum += (pSum / 3); count++;
+                    const r = results[uid].ratings;
+                    if(r && r[i]) {
+                        sumC1 += r[i][0]; sumC2 += r[i][1]; sumC3 += r[i][2];
+                        sumTotal += (r[i][0] + r[i][1] + r[i][2]) / 3;
+                        count++;
                     }
                 }
-                stats.push({ id: p.id, title: p.title, avg: count > 0 ? (sum / count) : 0, votes: count });
+                stats.push({ id: p.id, avg: count > 0 ? (sumTotal/count) : 0, c1: count > 0 ? (sumC1/count) : 0, c2: count > 0 ? (sumC2/count) : 0, c3: count > 0 ? (sumC3/count) : 0, votes: count });
             });
             stats.sort((a, b) => b.avg - a.avg);
-            let html = '<table><tr><th>ID</th><th>Ø</th><th>Votes</th></tr>';
-            stats.forEach(s => { html += `<tr><td>${s.id}</td><td>${s.avg.toFixed(2)}</td><td>${s.votes}</td></tr>`; });
+            let html = '<table><tr><th>ID</th><th>Ø Ges</th><th>Exc</th><th>Str</th><th>Rel</th><th>n</th></tr>';
+            stats.forEach(s => { html += `<tr><td><b>${s.id}</b></td><td>${s.avg.toFixed(2)}</td><td>${s.c1.toFixed(1)}</td><td>${s.c2.toFixed(1)}</td><td>${s.c3.toFixed(1)}</td><td>${s.votes}</td></tr>`; });
             document.getElementById('adminTable').innerHTML = html + '</table>';
         });
     }
@@ -272,12 +287,12 @@
     function exportToCSV() {
         db.ref('results').once('value', snap => {
             const results = snap.val();
-            let csv = "\ufeffJuror;Poster-ID;Mittelwert\n";
+            let csv = "\ufeffJuror;Poster-ID;Exzellenz;Struktur;Relevanz;Schnitt\n";
             for(let uid in results) {
                 const r = results[uid].ratings;
                 for(let pIdx in r) {
-                    let sum = 0; for(let c=0; c<3; c++) sum += r[pIdx][c];
-                    csv += `"${results[uid].juror_name}";"${posterData[pIdx].id}";${(sum/3).toFixed(2)}\n`;
+                    const s1 = r[pIdx][0], s2 = r[pIdx][1], s3 = r[pIdx][2];
+                    csv += `"${results[uid].juror_name}";"${posterData[pIdx].id}";${s1};${s2};${s3};${((s1+s2+s3)/3).toFixed(2)}\n`;
                 }
             }
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
