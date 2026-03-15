@@ -52,8 +52,8 @@
         .crit-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f9f9f9; }
         .info-icon { display: inline-block; width: 18px; height: 18px; background: var(--accent); color: white; border-radius: 50%; text-align: center; line-height: 18px; font-size: 11px; margin-left: 8px; cursor: pointer; }
         
-        .author-bubble, .info-text-bubble { display: none; background: #f8f9fa; padding: 10px; border-radius: 8px; font-size: 0.8rem; margin: 8px 0; border: 1px solid #eee; }
-        .info-text-bubble { background: #ebf5fb; color: #2e86c1; border-color: #d6eaf8; }
+        .author-bubble, .info-text-bubble { display: none; background: #f8f9fa; padding: 12px; border-radius: 8px; font-size: 0.8rem; margin: 8px 0; border: 1px solid #eee; line-height: 1.4; }
+        .info-text-bubble { background: #ebf5fb; color: #2e86c1; border-color: #d6eaf8; margin-top: -5px; margin-bottom: 15px; }
 
         select { padding: 8px; border-radius: 6px; border: 2px solid #ddd; font-size: 1.1rem; width: 70px; font-weight: bold; text-align: center; }
         .btn-save-local { background: var(--accent); color: white; border: none; padding: 14px; border-radius: 8px; width: 100%; font-weight: 800; margin-top: 10px; }
@@ -76,7 +76,7 @@
         <ul>
             <li>Wählen Sie ein Poster aus der Liste.</li>
             <li>Nutzen Sie die 3 Kriterien (1-5 Punkte).</li>
-            <li><b>Zwischenspeichern:</b> Ihre Eingaben werden automatisch lokal gespeichert.</li>
+            <li><b>Info-Icons (i):</b> Klicken für Details direkt unter dem Kriterium.</li>
         </ul>
         <h3>3. Abschluss (WICHTIG!)</h3>
         <p>Sobald Sie fertig sind, klicken Sie ganz unten auf den grünen Button <b>„Zentral Speichern“</b>. Erst dann werden die Daten an die Datenbank übertragen.</p>
@@ -90,12 +90,12 @@
         <h2>🔬 Der Drei-Säulen-Check</h2>
         <p>Damit die Auswahl der Posterpreise transparent und konsistent erfolgt, konzentrieren wir uns auf die folgenden drei Kernbereiche:</p>
         
-        <h3>1. Exzellenz & Innovation</h3>
+        <h3>1. Wissenschaftliche Exzellenz & Innovation</h3>
         <p><b>Originalität:</b> Bietet die Arbeit einen neuartigen Ansatz oder eine signifikante Weiterentwicklung bestehender Modelle und Methoden?</p>
         <p><b>Methodische Strenge:</b> Liegt eine präzise Hypothese vor? Sind die biomechanischen Parameter korrekt erfasst, validiert und statistisch belastbar abgesichert?</p>
         <p><b>Erkenntnisgewinn:</b> Trägt die Arbeit substanziell zum tieferen Verständnis mechanischer Prozesse in biologischen Systemen bei?</p>
 
-        <h3>2. Struktur & Visualisierung</h3>
+        <h3>2. Struktur & Visuelle Kommunikation</h3>
         <p><b>Roter Faden:</b> Ist die Argumentationskette – von der Hypothese über den Versuchsaufbau bis zum Fazit – intuitiv und logisch nachvollziehbar?</p>
         <p><b>Visualisierung:</b> Sind Abbildungen und Diagramme so präzise gestaltet, dass sie ihre Aussage ohne langes Studium der Legende vermitteln?</p>
         <p><b>Prägnanz:</b> Wird das Wesentliche (die „Take-Home-Message“) klar und pointiert kommuniziert oder geht sie in Informationstiefe unter?</p>
@@ -186,9 +186,9 @@
     ];
 
     const criteriaData = [
-        { name: "Exzellenz & Innovation", info: "Originalität: Bietet die Arbeit einen neuartigen Ansatz oder eine signifikante Weiterentwicklung bestehender Modelle und Methoden? Methodische Strenge: Liegt eine präzise Hypothese vor? Sind die biomechanischen Parameter korrekt erfasst, validiert und statistisch belastbar abgesichert? Erkenntnisgewinn: Trägt die Arbeit substanziell zum tieferen Verständnis mechanischer Prozesse in biologischen Systemen bei?" },
-        { name: "Struktur & Visualisierung", info: "Roter Faden: Ist die Argumentationskette intuitiv und logisch nachvollziehbar? Visualisierung: Sind Abbildungen und Diagramme präzise gestaltet? Prägnanz: Wird das Wesentliche klar kommuniziert?" },
-        { name: "Relevanz & Transferpotential", info: "Anwendungsbezug: Welchen konkreten Nutzen stiftet die Arbeit für die Klinik, den Sport oder die Grundlagenforschung? Reflexion: Werden die Ergebnisse kritisch hinterfragt? Zukunftspotenzial: Impulse für die Forschung?" }
+        { name: "Wissenschaftliche Exzellenz & Innovation", info: "<strong>Originalität:</strong> Bietet die Arbeit einen neuartigen Ansatz oder eine signifikante Weiterentwicklung bestehender Modelle und Methoden? <strong>Methodische Strenge:</strong> Liegt eine präzise Hypothese vor? Sind die biomechanischen Parameter korrekt erfasst, validiert und statistisch belastbar abgesichert? <strong>Erkenntnisgewinn:</strong> Trägt die Arbeit substanziell zum tieferen Verständnis mechanischer Prozesse in biologischen Systemen bei?" },
+        { name: "Struktur & Visuelle Kommunikation", info: "<strong>Roter Faden:</strong> Ist die Argumentationskette intuitiv und logisch nachvollziehbar? <strong>Visualisierung:</strong> Sind Abbildungen und Diagramme präzise gestaltet? <strong>Prägnanz:</strong> Wird das Wesentliche klar kommuniziert?" },
+        { name: "Relevanz & Transferpotential", info: "<strong>Anwendungsbezug:</strong> Welchen konkreten Nutzen stiftet die Arbeit für die Klinik, den Sport oder die Grundlagenforschung? <strong>Reflexion:</strong> Werden die Ergebnisse kritisch hinterfragt? <strong>Zukunftspotenzial:</strong> Impulse für die Forschung?" }
     ];
 
     const container = document.getElementById('mainContainer');
@@ -196,7 +196,6 @@
         let critHtml = '';
         criteriaData.forEach((c, cIdx) => {
             critHtml += `
-            <div id="info-bubble-${pIdx}-${cIdx}" class="info-text-bubble">${c.info}</div>
             <div class="crit-row">
                 <div style="display:flex; align-items:center; font-size:0.85rem;">
                     ${c.name} <span class="info-icon" onclick="event.stopPropagation(); toggleEl('info-bubble-${pIdx}-${cIdx}')">i</span>
@@ -205,7 +204,8 @@
                     <option value="" disabled selected>-</option>
                     <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
                 </select>
-            </div>`;
+            </div>
+            <div id="info-bubble-${pIdx}-${cIdx}" class="info-text-bubble">${c.info}</div>`;
         });
         const item = document.createElement('div');
         item.className = 'poster-item';
