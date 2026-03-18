@@ -16,46 +16,51 @@
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 3000; padding: 20px; }
         .modal-content { background: white; padding: 20px; border-radius: 15px; max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .modal-content h2 { margin-top: 0; color: var(--primary); font-size: 1.2rem; border-bottom: 2px solid var(--accent); padding-bottom: 8px; }
+        .modal-content h3 { font-size: 1rem; margin: 15px 0 5px 0; color: var(--accent); font-weight: bold; }
+        .modal-content p { font-size: 0.9rem; color: #444; margin: 5px 0; }
         .btn-close-modal { background: var(--success); color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 20px; }
 
-        /* HEADER & STICKY */
+        /* HEADER */
         .sticky-top-area { position: sticky; top: 0; z-index: 1000; background: var(--bg); }
         .header { background: white; padding: 10px 0; box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-align: center; }
         .logo-container img { width: 100%; max-width: 500px; height: auto; display: block; margin: 0 auto; }
         .header-content { padding: 5px 15px 10px 15px; background: white; }
         input[type="text"] { width: 100%; padding: 12px; border-radius: 8px; border: 2px solid #eee; font-size: 16px; text-align: center; background: #f9f9f9; font-weight: bold; }
 
-        /* LISTE */
-        #mainContainer { padding: 15px; padding-bottom: 100px; }
-        .poster-item { background: white; margin-bottom: 12px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 5px solid #ddd; transition: 0.3s; }
+        /* POSTER LISTE */
+        #mainContainer { padding: 15px; padding-bottom: 120px; }
+        .poster-item { background: white; margin-bottom: 12px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 5px solid #ddd; }
         .poster-item.active { border-left-color: var(--accent); }
         .poster-item.done { border-left-color: var(--success); background: #fafffb; }
 
         .poster-header { padding: 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: flex-start; font-weight: 600; font-size: 0.85rem; }
+        .poster-title-area { flex: 1; padding-right: 10px; }
+        .author-info-btn { background: #f0f0f0; color: #666; width: 30px; height: 30px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+        
         .poster-content { display: none; padding: 10px 14px; border-top: 1px solid #f0f0f0; }
         .poster-item.active .poster-content { display: block; }
 
         .crit-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f9f9f9; }
-        select { padding: 8px; border-radius: 6px; border: 2px solid #ddd; font-size: 1.1rem; width: 70px; font-weight: bold; text-align: center; }
+        .info-icon { display: inline-block; width: 18px; height: 18px; background: var(--accent); color: white; border-radius: 50%; text-align: center; line-height: 18px; font-size: 11px; margin-left: 8px; cursor: pointer; }
         
+        .author-bubble, .info-text-bubble { display: none; background: #f8f9fa; padding: 12px; border-radius: 8px; font-size: 0.8rem; margin: 8px 0; border: 1px solid #eee; line-height: 1.4; }
+        .info-text-bubble { background: #ebf5fb; color: #2e86c1; border-color: #d6eaf8; }
+
+        select { padding: 8px; border-radius: 6px; border: 2px solid #ddd; font-size: 1.1rem; width: 70px; font-weight: bold; text-align: center; background: white; }
         .btn-save-local { background: var(--accent); color: white; border: none; padding: 14px; border-radius: 8px; width: 100%; font-weight: 800; margin-top: 10px; }
-        .btn-cloud { position: fixed; bottom: 15px; left: 15px; right: 15px; background: var(--success); color: white; border: none; padding: 18px; border-radius: 12px; font-size: 1.1rem; font-weight: 800; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4); z-index: 2000; }
         
-        #adminArea { padding: 15px; background: white; margin: 15px; border-radius: 12px; display: none; border: 2px solid #e67e22; }
-        table { width: 100%; border-collapse: collapse; font-size: 0.7rem; }
-        th, td { border: 1px solid #eee; padding: 6px; text-align: center; }
-        .author-bubble { display: none; background: #f8f9fa; padding: 10px; font-size: 0.8rem; border-radius: 5px; margin-top: 5px; font-weight: normal; }
+        .btn-cloud { position: fixed; bottom: 20px; left: 15px; right: 15px; background: var(--success); color: white; border: none; padding: 18px; border-radius: 12px; font-size: 1.1rem; font-weight: 800; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4); z-index: 2000; }
     </style>
 </head>
 <body>
 
 <div id="guideModal" class="modal-overlay">
     <div class="modal-content">
-        <h2>📋 Kurzanleitung: Jury Panel</h2>
-        <p>1. Namen oben eingeben.<br>
-           2. Poster bewerten (1-5).<br>
-           3. <b>"Übernehmen"</b> klicken (lokales Backup).<br>
-           4. Am Ende <b>"Zentral Speichern"</b> klicken.</p>
+        <h2>📋 Kurzanleitung: Poster Award</h2>
+        <p>1. Name oben eingeben (wird automatisch gemerkt).</p>
+        <p>2. Poster bewerten (1-5 Punkte).</p>
+        <p>3. <b>"Übernehmen"</b> klicken (lokales Backup auf diesem Gerät).</p>
+        <p>4. Zum Schluss <b>"Zentral Speichern"</b> klicken für die Datenbank.</p>
         <button class="btn-close-modal" onclick="closeModal('guideModal')">Verstanden & Starten</button>
     </div>
 </div>
@@ -73,12 +78,6 @@
 
 <button class="btn-cloud" onclick="finalCloudUpload()">Zentral Speichern</button>
 
-<button onclick="toggleAdmin()" style="width:100%; padding:20px; opacity:0.02; background:none; border:none;">Admin</button>
-<div id="adminArea">
-    <h3>Ranking Übersicht</h3>
-    <div id="adminTable"></div>
-</div>
-
 <script>
     const firebaseConfig = {
         apiKey: "AIzaSyAMk8sqJiTbOB1LKNZJ4peKEBoyz_2sohM",
@@ -92,25 +91,31 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    let jurorUID = localStorage.getItem('jurorUID') || ("J-" + Math.random().toString(36).substr(2, 5).toUpperCase());
+    const jurorUID = localStorage.getItem('jurorUID') || ("J-" + Math.random().toString(36).substr(2, 5).toUpperCase());
     localStorage.setItem('jurorUID', jurorUID);
 
     const posterData = [
-        { id: 111, title: "Exploring optimal body positioning in MTB gravity sports", authors: "Ronzon et al." },
-        { id: 146, title: "Quellverhalten der Bandscheibe", authors: "Greiner-Perth et al." },
-        { id: 155, title: "Comparison of gait variations", authors: "Knottnerus-Meyer et al." },
-        { id: 158, title: "Osteosynthesis screw failure", authors: "Reisinger et al." },
-        { id: 168, title: "µCT-based geometry bone properties", authors: "Komrakova et al." },
-        { id: 170, title: "Human activity recognition algorithms", authors: "Catalano et al." },
-        { id: 172, title: "Lockerungserkennung Hüftendoprothesen", authors: "Grummüller et al." },
-        { id: 188, title: "Einfluss von Krafttraining auf Knie", authors: "Osterloh et al." },
-        { id: 204, title: "In vivo Belastung Wirbelkörper", authors: "Erhard et al." },
-        { id: 223, title: "Neuromuskuläre Stimulation", authors: "Lieshoff et al." },
-        { id: 224, title: "Adhesion titanium nanotubes", authors: "Buchholz et al." },
-        { id: 229, title: "Sacral fractures plating", authors: "Rudek et al." },
-        { id: 251, title: "Muscle extension wearable systems", authors: "Sadretdinova et al." },
-        { id: 259, title: "Triceps surae muscle volume", authors: "Kelley et al." },
-        { id: 264, title: "Gangparameter Sprunggelenksfraktur", authors: "Oestreich et al." }
+        { id: 111, title: "Exploring optimal body positioning in MTB gravity sports using IMU data", authors: "Ronzon et al." },
+        { id: 146, title: "Wie beeinflusst mechanische Belastung das Quellverhalten der Bandscheibe? Eine In-vitro-Studie", authors: "Greiner-Perth et al." },
+        { id: 155, title: "Comparison of gait variations during forward, sideways, and backward movement...", authors: "Knottnerus-Meyer et al." },
+        { id: 158, title: "Osteosynthesis screw failure predicted by machine-learning models", authors: "Reisinger et al." },
+        { id: 168, title: "Integrating µCT-based geometry into biomechanical testing of bone properties...", authors: "Komrakova et al." },
+        { id: 170, title: "Evaluating human activity recognition algorithms for weight-bearing detection...", authors: "Catalano et al." },
+        { id: 172, title: "Lockerungserkennung von Hüftendoprothesen-Stielen mittels Körperschallmessungen", authors: "Grummüller et al." },
+        { id: 188, title: "Einfluss von Krafttraining auf die Kniegelenkskinematik und -kinetik beim Gehen", authors: "Osterloh et al." },
+        { id: 204, title: "In vivo Belastung induziert ortsspezifische Gewebeanpassung in Wirbelkörpern", authors: "Erhard et al." },
+        { id: 223, title: "Einfluss neuromuskulärer Stimulation auf thermografische Veränderungen", authors: "Lieshoff et al." },
+        { id: 224, title: "Adhesion enhancement of titanium nanotubes on Ti6Al4V", authors: "Buchholz et al." },
+        { id: 229, title: "Single vs. double plating in low transverse sacral fractures", authors: "Rudek et al." },
+        { id: 251, title: "Muscle extension analysis for soft wearable systems design", authors: "Sadretdinova et al." },
+        { id: 259, title: "Accuracy of a simplified method for assessing triceps surae muscle volume", authors: "Kelley et al." },
+        { id: 264, title: "Longitudinale Entwicklung verschiedener Gangparameter nach Sprunggelenksfraktur", authors: "Oestreich et al." }
+    ];
+
+    const criteriaData = [
+        { name: "Wissenschaftliche Exzellenz", info: "Originalität, methodische Strenge, Erkenntnisgewinn." },
+        { name: "Visuelle Kommunikation", info: "Roter Faden, Visualisierung, Prägnanz." },
+        { name: "Relevanz & Transfer", info: "Anwendungsbezug, Reflexion, Zukunftspotenzial." }
     ];
 
     window.onload = () => {
@@ -127,19 +132,24 @@
             item.id = `poster-item-${pIdx}`;
             item.innerHTML = `
                 <div class="poster-header" onclick="togglePoster(${pIdx})">
-                    <div style="flex:1"><strong>${p.id}</strong>: ${p.title}</div>
-                    <div onclick="event.stopPropagation(); toggleEl('author-${pIdx}')" style="margin-left:10px">👤</div>
+                    <div class="poster-title-area">
+                        <strong>${p.id}</strong>: ${p.title}
+                    </div>
+                    <div class="author-info-btn" onclick="event.stopPropagation(); toggleEl('author-${pIdx}')">👤</div>
                 </div>
                 <div id="author-${pIdx}" class="author-bubble">${p.authors}</div>
                 <div class="poster-content">
-                    ${[0,1,2].map(c => `
+                    ${criteriaData.map((c, cIdx) => `
                         <div class="crit-row">
-                            <span>${["Exzellenz", "Struktur", "Relevanz"][c]}</span>
-                            <select class="score-sel" data-p="${pIdx}" data-c="${c}" onchange="saveAllToLocal()">
+                            <div style="font-size:0.8rem">
+                                ${c.name} <span class="info-icon" onclick="event.stopPropagation(); toggleEl('info-${pIdx}-${cIdx}')">i</span>
+                            </div>
+                            <select class="score-sel" data-p="${pIdx}" data-c="${cIdx}" onchange="saveAllToLocal()">
                                 <option value="">-</option>
                                 <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
                             </select>
                         </div>
+                        <div id="info-${pIdx}-${cIdx}" class="info-text-bubble">${c.info}</div>
                     `).join('')}
                     <button class="btn-save-local" id="btn-save-${pIdx}" onclick="markAsDone(${pIdx})">Übernehmen</button>
                 </div>`;
@@ -147,7 +157,6 @@
         });
     }
 
-    // --- LOCAL STORAGE LOGIK ---
     function saveAllToLocal() {
         const ratings = {};
         document.querySelectorAll('.score-sel').forEach(s => {
@@ -164,28 +173,26 @@
             ratings: ratings,
             doneList: doneList
         };
-        localStorage.setItem('dgfb_backup', JSON.stringify(backup));
+        localStorage.setItem('dgfb_backup_2026', JSON.stringify(backup));
     }
 
     function restoreFromLocal() {
-        const data = JSON.parse(localStorage.getItem('dgfb_backup'));
+        const data = JSON.parse(localStorage.getItem('dgfb_backup_2026'));
         if(!data) return;
-
         if(data.name) document.getElementById('jurorName').value = data.name;
-        
         for(let pIdx in data.ratings) {
             for(let cIdx in data.ratings[pIdx]) {
                 const sel = document.querySelector(`.score-sel[data-p="${pIdx}"][data-c="${cIdx}"]`);
                 if(sel) sel.value = data.ratings[pIdx][cIdx];
             }
         }
-
         if(data.doneList) {
             data.doneList.forEach(id => {
                 const el = document.getElementById(id);
                 if(el) {
                     el.classList.add('done');
-                    const btn = el.querySelector('.btn-save-local');
+                    const pIdx = id.replace('poster-item-', '');
+                    const btn = document.getElementById(`btn-save-${pIdx}`);
                     if(btn) { btn.innerHTML = "✓ Gespeichert"; btn.style.background = "var(--success)"; }
                 }
             });
@@ -204,17 +211,14 @@
         const btn = document.getElementById(`btn-save-${idx}`);
         btn.innerHTML = "✓ Gespeichert";
         btn.style.background = "var(--success)";
-        
         saveAllToLocal();
     }
 
-    // --- CLOUD LOGIK ---
     async function finalCloudUpload() {
         const name = document.getElementById('jurorName').value.trim();
-        if(!name) { alert("Bitte Namen oben eingeben!"); return; }
-        
-        const backup = JSON.parse(localStorage.getItem('dgfb_backup'));
-        if(!backup || Object.keys(backup.ratings).length === 0) { alert("Keine Bewertungen zum Speichern gefunden!"); return; }
+        if(!name) { alert("Bitte Namen eingeben!"); return; }
+        const backup = JSON.parse(localStorage.getItem('dgfb_backup_2026'));
+        if(!backup || Object.keys(backup.ratings).length === 0) { alert("Keine Bewertungen zum Speichern!"); return; }
 
         try {
             await db.ref('results/' + jurorUID).set({
@@ -222,26 +226,24 @@
                 ratings: backup.ratings,
                 last_update: new Date().toISOString()
             });
-            alert("Erfolgreich in der Cloud gespeichert!");
+            alert("Daten erfolgreich zentral gespeichert!");
         } catch (e) {
             alert("Fehler: " + e.message);
         }
     }
 
-    // --- HELFER ---
     function togglePoster(idx) {
         const item = document.getElementById(`poster-item-${idx}`);
         const isActive = item.classList.contains('active');
         document.querySelectorAll('.poster-item').forEach(el => el.classList.remove('active'));
         if (!isActive) item.classList.add('active');
     }
-    function toggleEl(id) { 
-        const el = document.getElementById(id); 
-        el.style.display = (el.style.display === 'block') ? 'none' : 'block'; 
+    function toggleEl(id) {
+        const el = document.getElementById(id);
+        el.style.display = (el.style.display === 'block') ? 'none' : 'block';
     }
     function openModal(id) { document.getElementById(id).style.display = 'flex'; }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; localStorage.setItem('guideSeen', 'true'); }
-    function toggleAdmin() { if(prompt("Passwort:") === "admin123") document.getElementById('adminArea').style.display = 'block'; }
 </script>
 </body>
 </html>
