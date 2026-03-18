@@ -8,7 +8,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
     
     <style>
-        :root { --primary: #2c3e50; --accent: #3498db; --bg: #f0f2f5; --success: #2ecc71; --text: #2c3e50; }
+        :root { --primary: #2c3e50; --accent: #3498db; --bg: #f0f2f5; --success: #2ecc71; --text: #2c3e50; --danger: #e74c3c; }
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--text); line-height: 1.4; }
 
@@ -16,26 +16,29 @@
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 3000; padding: 20px; }
         .modal-content { background: white; padding: 20px; border-radius: 15px; max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .modal-content h2 { margin-top: 0; color: var(--primary); font-size: 1.2rem; border-bottom: 2px solid var(--accent); padding-bottom: 8px; }
-        .modal-content h3 { font-size: 1rem; margin: 15px 0 5px 0; color: var(--accent); font-weight: bold; }
-        .modal-content p { font-size: 0.9rem; color: #444; margin: 5px 0; }
         .btn-close-modal { background: var(--success); color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 20px; }
 
         /* HEADER */
-        .sticky-top-area { position: sticky; top: 0; z-index: 1000; background: var(--bg); }
-        .header { background: white; padding: 10px 0; box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-align: center; }
+        .sticky-top-area { position: sticky; top: 0; z-index: 1000; background: var(--bg); border-bottom: 2px solid #ddd; }
+        .header { background: white; padding: 10px 0; text-align: center; }
         .logo-container img { width: 100%; max-width: 500px; height: auto; display: block; margin: 0 auto; }
-        .header-content { padding: 5px 15px 10px 15px; background: white; }
-        input[type="text"] { width: 100%; padding: 12px; border-radius: 8px; border: 2px solid #eee; font-size: 16px; text-align: center; background: #f9f9f9; font-weight: bold; }
+        .header-content { padding: 10px 15px; background: white; }
+        
+        /* NAME INPUT HIGHLIGHT */
+        input[type="text"] { width: 100%; padding: 15px; border-radius: 8px; border: 3px solid #eee; font-size: 16px; text-align: center; background: #fff; font-weight: bold; transition: all 0.3s; }
+        input[type="text"].missing { border-color: var(--danger); background: #fff5f5; animation: shake 0.4s; }
+        @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-5px);} 75% {transform: translateX(5px);} }
 
-        /* POSTER LISTE */
-        #mainContainer { padding: 15px; padding-bottom: 120px; }
+        /* POSTER LISTE LOCK MECHANISM */
+        #mainContainer { padding: 15px; padding-bottom: 120px; transition: opacity 0.3s; }
+        #mainContainer.locked { opacity: 0.3; pointer-events: none; filter: grayscale(0.5); }
+        
         .poster-item { background: white; margin-bottom: 12px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 5px solid #ddd; }
         .poster-item.active { border-left-color: var(--accent); }
         .poster-item.done { border-left-color: var(--success); background: #fafffb; }
 
         .poster-header { padding: 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: flex-start; font-weight: 600; font-size: 0.85rem; }
         .poster-title-area { flex: 1; padding-right: 10px; }
-        .author-info-btn { background: #f0f0f0; color: #666; width: 30px; height: 30px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
         
         .poster-content { display: none; padding: 10px 14px; border-top: 1px solid #f0f0f0; }
         .poster-item.active .poster-content { display: block; }
@@ -43,10 +46,9 @@
         .crit-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f9f9f9; }
         .info-icon { display: inline-block; width: 18px; height: 18px; background: var(--accent); color: white; border-radius: 50%; text-align: center; line-height: 18px; font-size: 11px; margin-left: 8px; cursor: pointer; }
         
-        .author-bubble, .info-text-bubble { display: none; background: #f8f9fa; padding: 12px; border-radius: 8px; font-size: 0.8rem; margin: 8px 0; border: 1px solid #eee; line-height: 1.4; }
-        .info-text-bubble { background: #ebf5fb; color: #2e86c1; border-color: #d6eaf8; }
+        .author-bubble, .info-text-bubble { display: none; background: #f8f9fa; padding: 12px; border-radius: 8px; font-size: 0.8rem; margin: 8px 0; border: 1px solid #eee; }
 
-        select { padding: 8px; border-radius: 6px; border: 2px solid #ddd; font-size: 1.1rem; width: 70px; font-weight: bold; text-align: center; background: white; }
+        select { padding: 8px; border-radius: 6px; border: 2px solid #ddd; font-size: 1.1rem; width: 70px; font-weight: bold; text-align: center; }
         .btn-save-local { background: var(--accent); color: white; border: none; padding: 14px; border-radius: 8px; width: 100%; font-weight: 800; margin-top: 10px; }
         
         .btn-cloud { position: fixed; bottom: 20px; left: 15px; right: 15px; background: var(--success); color: white; border: none; padding: 18px; border-radius: 12px; font-size: 1.1rem; font-weight: 800; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4); z-index: 2000; }
@@ -56,12 +58,10 @@
 
 <div id="guideModal" class="modal-overlay">
     <div class="modal-content">
-        <h2>📋 Kurzanleitung: Poster Award</h2>
-        <p>1. Name oben eingeben (wird automatisch gemerkt).</p>
-        <p>2. Poster bewerten (1-5 Punkte).</p>
-        <p>3. <b>"Übernehmen"</b> klicken (lokales Backup auf diesem Gerät).</p>
-        <p>4. Zum Schluss <b>"Zentral Speichern"</b> klicken für die Datenbank.</p>
-        <button class="btn-close-modal" onclick="closeModal('guideModal')">Verstanden & Starten</button>
+        <h2>📋 Wichtiger Hinweis</h2>
+        <p>Bevor Sie mit der Bewertung beginnen können, geben Sie bitte oben Ihr <b>Juroren-Kürzel oder Ihren Namen</b> ein.</p>
+        <p>Ohne Namen können keine Daten gespeichert werden.</p>
+        <button class="btn-close-modal" onclick="closeModal('guideModal')">Verstanden</button>
     </div>
 </div>
 
@@ -70,11 +70,11 @@
         <div class="logo-container"><img src="https://bio-mechanik.org/wp-content/uploads/2025/08/DGfB-banner-v8-1.png"></div>
     </div>
     <div class="header-content">
-        <input type="text" id="jurorName" placeholder="Ihr Name / Kürzel" oninput="saveAllToLocal()">
+        <input type="text" id="jurorName" placeholder="⚠️ BITTE NAME EINGEBEN" oninput="checkNameInput()">
     </div>
 </div>
 
-<div id="mainContainer"></div>
+<div id="mainContainer" class="locked"></div>
 
 <button class="btn-cloud" onclick="finalCloudUpload()">Zentral Speichern</button>
 
@@ -121,6 +121,7 @@
     window.onload = () => {
         renderPosters();
         restoreFromLocal();
+        checkNameInput(); // Initialer Check ob Name schon da ist
         if (!localStorage.getItem('guideSeen')) openModal('guideModal');
     };
 
@@ -132,18 +133,14 @@
             item.id = `poster-item-${pIdx}`;
             item.innerHTML = `
                 <div class="poster-header" onclick="togglePoster(${pIdx})">
-                    <div class="poster-title-area">
-                        <strong>${p.id}</strong>: ${p.title}
-                    </div>
+                    <div class="poster-title-area"><strong>${p.id}</strong>: ${p.title}</div>
                     <div class="author-info-btn" onclick="event.stopPropagation(); toggleEl('author-${pIdx}')">👤</div>
                 </div>
                 <div id="author-${pIdx}" class="author-bubble">${p.authors}</div>
                 <div class="poster-content">
                     ${criteriaData.map((c, cIdx) => `
                         <div class="crit-row">
-                            <div style="font-size:0.8rem">
-                                ${c.name} <span class="info-icon" onclick="event.stopPropagation(); toggleEl('info-${pIdx}-${cIdx}')">i</span>
-                            </div>
+                            <div style="font-size:0.8rem">${c.name} <span class="info-icon" onclick="event.stopPropagation(); toggleEl('info-${pIdx}-${cIdx}')">i</span></div>
                             <select class="score-sel" data-p="${pIdx}" data-c="${cIdx}" onchange="saveAllToLocal()">
                                 <option value="">-</option>
                                 <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
@@ -157,6 +154,18 @@
         });
     }
 
+    function checkNameInput() {
+        const nameInput = document.getElementById('jurorName');
+        const container = document.getElementById('mainContainer');
+        if (nameInput.value.trim().length > 1) {
+            container.classList.remove('locked');
+            nameInput.classList.remove('missing');
+        } else {
+            container.classList.add('locked');
+        }
+        saveAllToLocal();
+    }
+
     function saveAllToLocal() {
         const ratings = {};
         document.querySelectorAll('.score-sel').forEach(s => {
@@ -165,13 +174,10 @@
                 ratings[s.dataset.p][s.dataset.c] = s.value;
             }
         });
-        const doneList = [];
-        document.querySelectorAll('.poster-item.done').forEach(el => doneList.push(el.id));
-
         const backup = {
             name: document.getElementById('jurorName').value,
             ratings: ratings,
-            doneList: doneList
+            doneList: Array.from(document.querySelectorAll('.poster-item.done')).map(el => el.id)
         };
         localStorage.setItem('dgfb_backup_2026', JSON.stringify(backup));
     }
@@ -179,7 +185,10 @@
     function restoreFromLocal() {
         const data = JSON.parse(localStorage.getItem('dgfb_backup_2026'));
         if(!data) return;
-        if(data.name) document.getElementById('jurorName').value = data.name;
+        if(data.name) {
+            document.getElementById('jurorName').value = data.name;
+            checkNameInput();
+        }
         for(let pIdx in data.ratings) {
             for(let cIdx in data.ratings[pIdx]) {
                 const sel = document.querySelector(`.score-sel[data-p="${pIdx}"][data-c="${cIdx}"]`);
@@ -191,8 +200,7 @@
                 const el = document.getElementById(id);
                 if(el) {
                     el.classList.add('done');
-                    const pIdx = id.replace('poster-item-', '');
-                    const btn = document.getElementById(`btn-save-${pIdx}`);
+                    const btn = el.querySelector('.btn-save-local');
                     if(btn) { btn.innerHTML = "✓ Gespeichert"; btn.style.background = "var(--success)"; }
                 }
             });
@@ -200,6 +208,13 @@
     }
 
     function markAsDone(idx) {
+        const name = document.getElementById('jurorName').value.trim();
+        if(name.length < 2) { 
+            highlightNameField();
+            alert("Bitte geben Sie zuerst Ihren Namen oben ein!"); 
+            return; 
+        }
+
         const selects = document.querySelectorAll(`.score-sel[data-p="${idx}"]`);
         let allFilled = true;
         selects.forEach(s => { if(!s.value) allFilled = false; });
@@ -214,11 +229,23 @@
         saveAllToLocal();
     }
 
+    function highlightNameField() {
+        const field = document.getElementById('jurorName');
+        field.classList.add('missing');
+        field.focus();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
     async function finalCloudUpload() {
         const name = document.getElementById('jurorName').value.trim();
-        if(!name) { alert("Bitte Namen eingeben!"); return; }
+        if(name.length < 2) { 
+            highlightNameField();
+            alert("Name fehlt!"); 
+            return; 
+        }
+        
         const backup = JSON.parse(localStorage.getItem('dgfb_backup_2026'));
-        if(!backup || Object.keys(backup.ratings).length === 0) { alert("Keine Bewertungen zum Speichern!"); return; }
+        if(!backup || Object.keys(backup.ratings).length === 0) { alert("Keine Bewertungen gefunden!"); return; }
 
         try {
             await db.ref('results/' + jurorUID).set({
@@ -226,13 +253,17 @@
                 ratings: backup.ratings,
                 last_update: new Date().toISOString()
             });
-            alert("Daten erfolgreich zentral gespeichert!");
+            alert("Daten erfolgreich übertragen!");
         } catch (e) {
             alert("Fehler: " + e.message);
         }
     }
 
     function togglePoster(idx) {
+        if(document.getElementById('mainContainer').classList.contains('locked')) {
+            highlightNameField();
+            return;
+        }
         const item = document.getElementById(`poster-item-${idx}`);
         const isActive = item.classList.contains('active');
         document.querySelectorAll('.poster-item').forEach(el => el.classList.remove('active'));
