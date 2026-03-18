@@ -1,147 +1,5 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DGfB 2026 Jury Panel</title>
-    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
-    
-    <style>
-        :root { --primary: #2c3e50; --accent: #3498db; --bg: #f0f2f5; --success: #2ecc71; --text: #2c3e50; }
-        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--text); line-height: 1.4; }
-
-        /* MODALS */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 3000; padding: 20px; }
-        .modal-content { background: white; padding: 20px; border-radius: 15px; max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        .modal-content h2 { margin-top: 0; color: var(--primary); font-size: 1.2rem; border-bottom: 2px solid var(--accent); padding-bottom: 8px; }
-        .modal-content h3 { font-size: 1rem; margin: 15px 0 5px 0; color: var(--accent); font-weight: bold; }
-        .modal-content p, .modal-content li { font-size: 0.9rem; color: #444; }
-        .modal-content ul { padding-left: 18px; margin: 5px 0; }
-        .btn-close-modal { background: var(--success); color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 20px; }
-
-        /* HEADER & STICKY */
-        .sticky-top-area { position: sticky; top: 0; z-index: 1000; background: var(--bg); }
-        .header { background: white; padding: 10px 0; box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-align: center; }
-        .logo-container img { width: 100%; max-width: 500px; height: auto; display: block; margin: 0 auto; }
-        .header-content { padding: 5px 15px 10px 15px; background: white; }
-        input[type="text"] { width: 100%; padding: 12px; border-radius: 8px; border: 2px solid #eee; font-size: 16px; text-align: center; background: #f9f9f9; font-weight: bold; }
-
-        /* LEGENDE & HILFE BUTTONS */
-        .ranking-legend-row { background: #ffffff; padding: 10px 15px; border-bottom: 1px solid #ddd; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 6px -2px rgba(0,0,0,0.1); }
-        .legend-labels { display: flex; gap: 15px; font-size: 0.75rem; font-weight: 600; }
-        .score-box { padding: 2px 6px; border-radius: 4px; color: white; margin-right: 4px; }
-        .btn-group-help { display: flex; gap: 8px; }
-        .help-btn { background: var(--primary); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; border: none; font-size: 14px; }
-        .focus-btn { background: var(--accent); color: white; padding: 0 10px; height: 28px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; border: none; font-size: 11px; text-transform: uppercase; }
-
-        /* POSTER LISTE */
-        #mainContainer { padding: 15px; }
-        .poster-item { background: white; margin-bottom: 12px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 5px solid #ddd; transition: 0.3s; }
-        .poster-item.active { border-left-color: var(--accent); transform: scale(1.01); }
-        .poster-item.done { border-left-color: var(--success); background: #fafffb; }
-
-        .poster-header { padding: 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: flex-start; font-weight: 600; font-size: 0.85rem; }
-        .poster-title-area { flex: 1; padding-right: 10px; }
-        .author-info-btn { background: #f0f0f0; color: #666; width: 30px; height: 30px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
-        
-        .poster-content { display: none; padding: 10px 14px; border-top: 1px solid #f0f0f0; }
-        .poster-item.active .poster-content { display: block; }
-
-        .crit-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f9f9f9; }
-        .info-icon { display: inline-block; width: 18px; height: 18px; background: var(--accent); color: white; border-radius: 50%; text-align: center; line-height: 18px; font-size: 11px; margin-left: 8px; cursor: pointer; }
-        
-        .author-bubble, .info-text-bubble { display: none; background: #f8f9fa; padding: 12px; border-radius: 8px; font-size: 0.8rem; margin: 8px 0; border: 1px solid #eee; line-height: 1.4; }
-        .info-text-bubble { background: #ebf5fb; color: #2e86c1; border-color: #d6eaf8; margin-top: -5px; margin-bottom: 15px; }
-
-        select { padding: 8px; border-radius: 6px; border: 2px solid #ddd; font-size: 1.1rem; width: 70px; font-weight: bold; text-align: center; }
-        .btn-save-local { background: var(--accent); color: white; border: none; padding: 14px; border-radius: 8px; width: 100%; font-weight: 800; margin-top: 10px; }
-        .btn-cloud { background: var(--success); color: white; border: none; padding: 18px; border-radius: 12px; width: calc(100% - 30px); font-size: 1.1rem; font-weight: 800; margin: 10px 15px 40px 15px; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3); }
-
-        #adminArea { padding: 15px; background: white; margin: 15px; border-radius: 12px; display: none; border: 2px solid #e67e22; }
-        table { width: 100%; border-collapse: collapse; font-size: 0.7rem; }
-        th, td { border: 1px solid #eee; padding: 6px; text-align: center; }
-    </style>
-</head>
-<body>
-
-<div id="guideModal" class="modal-overlay">
-    <div class="modal-content">
-        <h2>📋 Kurzanleitung: Poster Award DGfB 2026</h2>
-        <p>Herzlich willkommen zum Begutachtungsprozess! Damit die Bewertung der Poster reibungslos gelingt, beachten Sie bitte folgende Schritte:</p>
-        <h3>1. Anmeldung</h3>
-        <p>Geben Sie Ihren Namen/Kürzel oben im Feld ein. Er wird automatisch Ihrer Jury-ID zugeordnet.</p>
-        <h3>2. Bewertungsvorgang</h3>
-        <ul>
-            <li>Wählen Sie ein Poster aus der Liste.</li>
-            <li>Nutzen Sie die 3 Kriterien (1-5 Punkte).</li>
-            <li><b>Info-Icons (i):</b> Klicken für Details direkt unter dem Kriterium.</li>
-        </ul>
-        <h3>3. Abschluss (WICHTIG!)</h3>
-        <p>Sobald Sie fertig sind, klicken Sie ganz unten auf den grünen Button <b>„Zentral Speichern“</b>. Erst dann werden die Daten an die Datenbank übertragen.</p>
-        <p>Bitte schließen Sie den Begutachtungsprozess bis <b>Donnerstag 19.03. - 13 Uhr</b> ab.</p>
-        <button class="btn-close-modal" onclick="closeModal('guideModal')">Verstanden & Starten</button>
-    </div>
-</div>
-
-<div id="focusModal" class="modal-overlay">
-    <div class="modal-content">
-        <h2>🔬 Der Drei-Säulen-Check</h2>
-        <p>Damit die Auswahl der Posterpreise transparent und konsistent erfolgt, konzentrieren wir uns auf die folgenden drei Kernbereiche:</p>
-        
-        <h3>1. Wissenschaftliche Exzellenz & Innovation</h3>
-        <p><b>Originalität:</b> Bietet die Arbeit einen neuartigen Ansatz oder eine signifikante Weiterentwicklung bestehender Modelle und Methoden?</p>
-        <p><b>Methodische Strenge:</b> Liegt eine präzise Hypothese vor? Sind die biomechanischen Parameter korrekt erfasst, validiert und statistisch belastbar abgesichert?</p>
-        <p><b>Erkenntnisgewinn:</b> Trägt die Arbeit substanziell zum tieferen Verständnis mechanischer Prozesse in biologischen Systemen bei?</p>
-
-        <h3>2. Struktur & Visuelle Kommunikation</h3>
-        <p><b>Roter Faden:</b> Ist die Argumentationskette – von der Hypothese über den Versuchsaufbau bis zum Fazit – intuitiv und logisch nachvollziehbar?</p>
-        <p><b>Visualisierung:</b> Sind Abbildungen und Diagramme so präzise gestaltet, dass sie ihre Aussage ohne langes Studium der Legende vermitteln?</p>
-        <p><b>Prägnanz:</b> Wird das Wesentliche (die „Take-Home-Message“) klar und pointiert kommuniziert oder geht sie in Informationstiefe unter?</p>
-
-        <h3>3. Relevanz & Transferpotenzial</h3>
-        <p><b>Anwendungsbezug:</b> Welchen konkreten Nutzen stiftet die Arbeit für die Klinik (z. B. Rehabilitation), den Sport oder die Grundlagenforschung?</p>
-        <p><b>Reflexion:</b> Werden die Ergebnisse kritisch im Kontext bestehender Literatur und unter Berücksichtigung eigener Limitationen hinterfragt?</p>
-        <p><b>Zukunftspotenzial:</b> Welchen Impuls gibt das Poster für die künftige biomechanische Forschung oder deren praktische Anwendung?</p>
-
-        <button class="btn-close-modal" style="background:var(--accent)" onclick="closeModal('focusModal')">Schließen</button>
-    </div>
-</div>
-
-<div class="sticky-top-area">
-    <div class="header">
-        <div class="logo-container"><img src="https://bio-mechanik.org/wp-content/uploads/2025/08/DGfB-banner-v8-1.png"></div>
-    </div>
-    <div class="header-content">
-        <input type="text" id="jurorName" placeholder="Ihr Name (Juroren-Kürzel)">
-    </div>
-    <div class="ranking-legend-row">
-        <div class="legend-labels">
-            <div><span class="score-box" style="background:#e74c3c">1</span> schlecht</div>
-            <div>...</div>
-            <div><span class="score-box" style="background:#2ecc71">5</span> exzellent</div>
-        </div>
-        <div class="btn-group-help">
-            <button class="focus-btn" onclick="openModal('focusModal')">Kriterien</button>
-            <button class="help-btn" onclick="openModal('guideModal')">?</button>
-        </div>
-    </div>
-</div>
-
-<div id="mainContainer"></div>
-
-<button class="btn-cloud" onclick="finalCloudUpload()">Zentral Speichern</button>
-
-<button onclick="toggleAdmin()" style="width:100%; padding:20px; opacity:0.02; background:none; border:none;">Admin</button>
-
-<div id="adminArea">
-    <h3>Ranking Detail-Übersicht</h3>
-    <button onclick="exportToCSV()" style="background:#e67e22; color:white; border:none; padding:8px; border-radius:5px; margin-bottom:10px;">CSV Export</button>
-    <div id="adminTable" style="overflow-x:auto;"></div>
-</div>
-
 <script>
+    // Firebase Konfiguration (wie gehabt)
     const firebaseConfig = {
         apiKey: "AIzaSyAMk8sqJiTbOB1LKNZJ4peKEBoyz_2sohM",
         authDomain: "dgfb-2026.firebaseapp.com",
@@ -149,19 +7,16 @@
         projectId: "dgfb-2026",
         storageBucket: "dgfb-2026.firebasestorage.app",
         messagingSenderId: "195774055960",
-        appId: "1:195774055960:web:b83f48b55f8ffd5266a56d",
-        measurementId: "G-0CS3ZW0ZDV"
+        appId: "1:195774055960:web:b83f48b55f8ffd5266a56d"
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
+    // Eindeutige ID für das Gerät
     let jurorUID = localStorage.getItem('jurorUID') || ("J-" + Math.random().toString(36).substr(2, 5).toUpperCase());
     localStorage.setItem('jurorUID', jurorUID);
 
-    window.onload = () => { if (!localStorage.getItem('guideSeen')) { openModal('guideModal'); } };
-    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
-    function closeModal(id) { document.getElementById(id).style.display = 'none'; if(id==='guideModal') localStorage.setItem('guideSeen', 'true'); }
-
+    // Poster-Daten (Array wie in deinem Original)
     const posterData = [
         { id: 111, title: "Exploring optimal body positioning in MTB gravity sports using IMU data", authors: "Ronzon et al." },
         { id: 146, title: "Wie beeinflusst mechanische Belastung das Quellverhalten der Bandscheibe? Eine In-vitro-Studie", authors: "Greiner-Perth et al." },
@@ -180,123 +35,26 @@
         { id: 264, title: "Longitudinale Entwicklung verschiedener Gangparameter nach Sprunggelenksfraktur", authors: "Oestreich et al." }
     ];
 
-    const criteriaData = [
-        { name: "Wissenschaftliche Exzellenz & Innovation", info: "<strong>Originalität:</strong> Bietet die Arbeit einen neuartigen Ansatz oder eine signifikante Weiterentwicklung bestehender Modelle und Methoden? <strong>Methodische Strenge:</strong> Liegt eine präzise Hypothese vor? Sind die biomechanischen Parameter korrekt erfasst, validiert und statistisch belastbar abgesichert? <strong>Erkenntnisgewinn:</strong> Trägt die Arbeit substanziell zum tieferen Verständnis bei?" },
-        { name: "Struktur & Visuelle Kommunikation", info: "<strong>Roter Faden:</strong> Ist die Argumentationskette intuitiv und logisch nachvollziehbar? <strong>Visualisierung:</strong> Sind Abbildungen und Diagramme präzise gestaltet? <strong>Prägnanz:</strong> Wird das Wesentliche klar kommuniziert?" },
-        { name: "Relevanz & Transferpotential", info: "<strong>Anwendungsbezug:</strong> Welchen konkreten Nutzen stiftet die Arbeit für die Klinik, den Sport oder die Grundlagenforschung? <strong>Reflexion:</strong> Werden die Ergebnisse kritisch hinterfragt? <strong>Zukunftspotenzial:</strong> Impulse für die Forschung?" }
-    ];
+    window.onload = () => {
+        renderUI();
+        loadFromLocalStorage(); // Daten wiederherstellen
+        if (!localStorage.getItem('guideSeen')) { openModal('guideModal'); }
+    };
 
-    const container = document.getElementById('mainContainer');
-    posterData.forEach((p, pIdx) => {
-        let critHtml = '';
-        criteriaData.forEach((c, cIdx) => {
-            critHtml += `
-            <div class="crit-row">
-                <div style="display:flex; align-items:center; font-size:0.85rem;">
-                    ${c.name} <span class="info-icon" onclick="event.stopPropagation(); toggleEl('info-bubble-${pIdx}-${cIdx}')">i</span>
-                </div>
-                <select class="score-sel" data-p="${pIdx}" data-c="${cIdx}">
-                    <option value="" disabled selected>-</option>
-                    <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
-                </select>
-            </div>
-            <div id="info-bubble-${pIdx}-${cIdx}" class="info-text-bubble">${c.info}</div>`;
-        });
-        const item = document.createElement('div');
-        item.className = 'poster-item';
-        item.id = `poster-item-${pIdx}`;
-        item.innerHTML = `
-            <div class="poster-header" onclick="togglePoster(${pIdx})">
-                <div class="poster-title-area">
-                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+    function renderUI() {
+        const container = document.getElementById('mainContainer');
+        container.innerHTML = '';
+        
+        posterData.forEach((p, pIdx) => {
+            const item = document.createElement('div');
+            item.className = 'poster-item';
+            item.id = `poster-item-${pIdx}`;
+            item.innerHTML = `
+                <div class="poster-header" onclick="togglePoster(${pIdx})">
+                    <div class="poster-title-area">
                         <span><strong>${p.id}</strong>: ${p.title}</span>
-                        <span class="author-info-btn" onclick="event.stopPropagation(); toggleEl('author-bubble-${pIdx}')">👤</span>
                     </div>
-                    <div id="author-bubble-${pIdx}" class="author-bubble">${p.authors}</div>
+                    <div class="author-info-btn" onclick="event.stopPropagation(); toggleEl('author-bubble-${pIdx}')">👤</div>
                 </div>
-            </div>
-            <div class="poster-content">${critHtml}<button class="btn-save-local" id="btn-save-${pIdx}" onclick="saveLocal(${pIdx})">Übernehmen</button></div>`;
-        container.appendChild(item);
-    });
-
-    function toggleEl(id) { const el = document.getElementById(id); el.style.display = (el.style.display === 'block') ? 'none' : 'block'; }
-    function togglePoster(idx) {
-        const item = document.getElementById(`poster-item-${idx}`);
-        const isActive = item.classList.contains('active');
-        document.querySelectorAll('.poster-item').forEach(el => el.classList.remove('active'));
-        if (!isActive) { item.classList.add('active'); window.scrollTo({ top: item.offsetTop - 180, behavior: 'smooth' }); }
-    }
-
-    function saveLocal(idx) {
-        const name = document.getElementById('jurorName').value.trim();
-        if(!name) { alert("Bitte Namen eingeben!"); return; }
-        const selects = document.querySelectorAll(`.score-sel[data-p="${idx}"]`);
-        let allFilled = true;
-        selects.forEach(s => { if(!s.value) allFilled = false; });
-        if(!allFilled) { alert("Bitte alle Kriterien bewerten!"); return; }
-        const btn = document.getElementById(`btn-save-${idx}`);
-        btn.innerHTML = "✓ Gespeichert";
-        btn.style.background = "var(--success)";
-        document.getElementById(`poster-item-${idx}`).classList.add('done');
-        document.getElementById(`poster-item-${idx}`).classList.remove('active');
-        autoSave();
-    }
-
-    function autoSave() {
-        const name = document.getElementById('jurorName').value.trim();
-        const ratings = {};
-        document.querySelectorAll('.poster-item.done').forEach(item => {
-            const pIdx = item.id.replace('poster-item-', '');
-            ratings[pIdx] = {};
-            item.querySelectorAll('.score-sel').forEach(s => { ratings[pIdx][s.dataset.c] = parseInt(s.value); });
-        });
-        db.ref('results/' + jurorUID).set({ juror_name: name, ratings: ratings, last_update: new Date().toISOString() });
-    }
-
-    function finalCloudUpload() { autoSave(); alert("Daten wurden erfolgreich zentral gespeichert!"); }
-    function toggleAdmin() { if(prompt("Passwort:") === "admin123") { document.getElementById('adminArea').style.display = 'block'; loadAdminTable(); } }
-
-    function loadAdminTable() {
-        db.ref('results').on('value', snap => {
-            const results = snap.val();
-            let stats = [];
-            posterData.forEach((p, i) => {
-                let sumTotal = 0, sumC1 = 0, sumC2 = 0, sumC3 = 0, count = 0;
-                for(let uid in results) {
-                    const r = results[uid].ratings;
-                    if(r && r[i]) {
-                        sumC1 += r[i][0]; sumC2 += r[i][1]; sumC3 += r[i][2];
-                        sumTotal += (r[i][0] + r[i][1] + r[i][2]) / 3;
-                        count++;
-                    }
-                }
-                stats.push({ id: p.id, avg: count > 0 ? (sumTotal/count) : 0, c1: count > 0 ? (sumC1/count) : 0, c2: count > 0 ? (sumC2/count) : 0, c3: count > 0 ? (sumC3/count) : 0, votes: count });
-            });
-            stats.sort((a, b) => b.avg - a.avg);
-            let html = '<table><tr><th>ID</th><th>Ø Ges</th><th>Exc</th><th>Str</th><th>Rel</th><th>n</th></tr>';
-            stats.forEach(s => { html += `<tr><td><b>${s.id}</b></td><td>${s.avg.toFixed(2)}</td><td>${s.c1.toFixed(1)}</td><td>${s.c2.toFixed(1)}</td><td>${s.c3.toFixed(1)}</td><td>${s.votes}</td></tr>`; });
-            document.getElementById('adminTable').innerHTML = html + '</table>';
-        });
-    }
-
-    function exportToCSV() {
-        db.ref('results').once('value', snap => {
-            const results = snap.val();
-            let csv = "\ufeffJuror;Poster-ID;Exzellenz;Struktur;Relevanz;Schnitt\n";
-            for(let uid in results) {
-                const r = results[uid].ratings;
-                for(let pIdx in r) {
-                    const s1 = r[pIdx][0], s2 = r[pIdx][1], s3 = r[pIdx][2];
-                    csv += `"${results[uid].juror_name}";"${posterData[pIdx].id}";${s1};${s2};${s3};${((s1+s2+s3)/3).toFixed(2)}\n`;
-                }
-            }
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.download = "DGfB_Ranking.csv";
-            link.click();
-        });
-    }
-</script>
-</body>
-</html>
+                <div id="author-bubble-${pIdx}" class="author-bubble">${p.authors}</div>
+                <div class="poster-content" id
