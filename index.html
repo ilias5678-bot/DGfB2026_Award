@@ -1,5 +1,85 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DGfB 2026 Jury Panel</title>
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
+    
+    <style>
+        :root { --primary: #2c3e50; --accent: #3498db; --bg: #f0f2f5; --success: #2ecc71; --text: #2c3e50; }
+        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--text); line-height: 1.4; }
+
+        /* MODALS */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 3000; padding: 20px; }
+        .modal-content { background: white; padding: 20px; border-radius: 15px; max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .modal-content h2 { margin-top: 0; color: var(--primary); font-size: 1.2rem; border-bottom: 2px solid var(--accent); padding-bottom: 8px; }
+        .btn-close-modal { background: var(--success); color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 20px; }
+
+        /* HEADER & STICKY */
+        .sticky-top-area { position: sticky; top: 0; z-index: 1000; background: var(--bg); }
+        .header { background: white; padding: 10px 0; box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-align: center; }
+        .logo-container img { width: 100%; max-width: 500px; height: auto; display: block; margin: 0 auto; }
+        .header-content { padding: 5px 15px 10px 15px; background: white; }
+        input[type="text"] { width: 100%; padding: 12px; border-radius: 8px; border: 2px solid #eee; font-size: 16px; text-align: center; background: #f9f9f9; font-weight: bold; }
+
+        /* LISTE */
+        #mainContainer { padding: 15px; padding-bottom: 100px; }
+        .poster-item { background: white; margin-bottom: 12px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 5px solid #ddd; transition: 0.3s; }
+        .poster-item.active { border-left-color: var(--accent); }
+        .poster-item.done { border-left-color: var(--success); background: #fafffb; }
+
+        .poster-header { padding: 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: flex-start; font-weight: 600; font-size: 0.85rem; }
+        .poster-content { display: none; padding: 10px 14px; border-top: 1px solid #f0f0f0; }
+        .poster-item.active .poster-content { display: block; }
+
+        .crit-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f9f9f9; }
+        select { padding: 8px; border-radius: 6px; border: 2px solid #ddd; font-size: 1.1rem; width: 70px; font-weight: bold; text-align: center; }
+        
+        .btn-save-local { background: var(--accent); color: white; border: none; padding: 14px; border-radius: 8px; width: 100%; font-weight: 800; margin-top: 10px; }
+        .btn-cloud { position: fixed; bottom: 15px; left: 15px; right: 15px; background: var(--success); color: white; border: none; padding: 18px; border-radius: 12px; font-size: 1.1rem; font-weight: 800; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4); z-index: 2000; }
+        
+        #adminArea { padding: 15px; background: white; margin: 15px; border-radius: 12px; display: none; border: 2px solid #e67e22; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.7rem; }
+        th, td { border: 1px solid #eee; padding: 6px; text-align: center; }
+        .author-bubble { display: none; background: #f8f9fa; padding: 10px; font-size: 0.8rem; border-radius: 5px; margin-top: 5px; font-weight: normal; }
+    </style>
+</head>
+<body>
+
+<div id="guideModal" class="modal-overlay">
+    <div class="modal-content">
+        <h2>📋 Kurzanleitung: Jury Panel</h2>
+        <p>1. Namen oben eingeben.<br>
+           2. Poster bewerten (1-5).<br>
+           3. <b>"Übernehmen"</b> klicken (lokales Backup).<br>
+           4. Am Ende <b>"Zentral Speichern"</b> klicken.</p>
+        <button class="btn-close-modal" onclick="closeModal('guideModal')">Verstanden & Starten</button>
+    </div>
+</div>
+
+<div class="sticky-top-area">
+    <div class="header">
+        <div class="logo-container"><img src="https://bio-mechanik.org/wp-content/uploads/2025/08/DGfB-banner-v8-1.png"></div>
+    </div>
+    <div class="header-content">
+        <input type="text" id="jurorName" placeholder="Ihr Name / Kürzel" oninput="saveAllToLocal()">
+    </div>
+</div>
+
+<div id="mainContainer"></div>
+
+<button class="btn-cloud" onclick="finalCloudUpload()">Zentral Speichern</button>
+
+<button onclick="toggleAdmin()" style="width:100%; padding:20px; opacity:0.02; background:none; border:none;">Admin</button>
+<div id="adminArea">
+    <h3>Ranking Übersicht</h3>
+    <div id="adminTable"></div>
+</div>
+
 <script>
-    // Firebase Konfiguration (wie gehabt)
     const firebaseConfig = {
         apiKey: "AIzaSyAMk8sqJiTbOB1LKNZJ4peKEBoyz_2sohM",
         authDomain: "dgfb-2026.firebaseapp.com",
@@ -12,49 +92,156 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // Eindeutige ID für das Gerät
     let jurorUID = localStorage.getItem('jurorUID') || ("J-" + Math.random().toString(36).substr(2, 5).toUpperCase());
     localStorage.setItem('jurorUID', jurorUID);
 
-    // Poster-Daten (Array wie in deinem Original)
     const posterData = [
-        { id: 111, title: "Exploring optimal body positioning in MTB gravity sports using IMU data", authors: "Ronzon et al." },
-        { id: 146, title: "Wie beeinflusst mechanische Belastung das Quellverhalten der Bandscheibe? Eine In-vitro-Studie", authors: "Greiner-Perth et al." },
-        { id: 155, title: "Comparison of gait variations during forward, sideways, and backward movement...", authors: "Knottnerus-Meyer et al." },
-        { id: 158, title: "Osteosynthesis screw failure predicted by machine-learning models", authors: "Reisinger et al." },
-        { id: 168, title: "Integrating µCT-based geometry into biomechanical testing of bone properties...", authors: "Komrakova et al." },
-        { id: 170, title: "Evaluating human activity recognition algorithms for weight-bearing detection...", authors: "Catalano et al." },
-        { id: 172, title: "Lockerungserkennung von Hüftendoprothesen-Stielen mittels Körperschallmessungen", authors: "Grummüller et al." },
-        { id: 188, title: "Einfluss von Krafttraining auf die Kniegelenkskinematik und -kinetik beim Gehen", authors: "Osterloh et al." },
-        { id: 204, title: "In vivo Belastung induziert ortsspezifische Gewebeanpassung in Wirbelkörpern", authors: "Erhard et al." },
-        { id: 223, title: "Einfluss neuromuskulärer Stimulation auf thermografische Veränderungen", authors: "Lieshoff et al." },
-        { id: 224, title: "Adhesion enhancement of titanium nanotubes on Ti6Al4V", authors: "Buchholz et al." },
-        { id: 229, title: "Single vs. double plating in low transverse sacral fractures", authors: "Rudek et al." },
-        { id: 251, title: "Muscle extension analysis for soft wearable systems design", authors: "Sadretdinova et al." },
-        { id: 259, title: "Accuracy of a simplified method for assessing triceps surae muscle volume", authors: "Kelley et al." },
-        { id: 264, title: "Longitudinale Entwicklung verschiedener Gangparameter nach Sprunggelenksfraktur", authors: "Oestreich et al." }
+        { id: 111, title: "Exploring optimal body positioning in MTB gravity sports", authors: "Ronzon et al." },
+        { id: 146, title: "Quellverhalten der Bandscheibe", authors: "Greiner-Perth et al." },
+        { id: 155, title: "Comparison of gait variations", authors: "Knottnerus-Meyer et al." },
+        { id: 158, title: "Osteosynthesis screw failure", authors: "Reisinger et al." },
+        { id: 168, title: "µCT-based geometry bone properties", authors: "Komrakova et al." },
+        { id: 170, title: "Human activity recognition algorithms", authors: "Catalano et al." },
+        { id: 172, title: "Lockerungserkennung Hüftendoprothesen", authors: "Grummüller et al." },
+        { id: 188, title: "Einfluss von Krafttraining auf Knie", authors: "Osterloh et al." },
+        { id: 204, title: "In vivo Belastung Wirbelkörper", authors: "Erhard et al." },
+        { id: 223, title: "Neuromuskuläre Stimulation", authors: "Lieshoff et al." },
+        { id: 224, title: "Adhesion titanium nanotubes", authors: "Buchholz et al." },
+        { id: 229, title: "Sacral fractures plating", authors: "Rudek et al." },
+        { id: 251, title: "Muscle extension wearable systems", authors: "Sadretdinova et al." },
+        { id: 259, title: "Triceps surae muscle volume", authors: "Kelley et al." },
+        { id: 264, title: "Gangparameter Sprunggelenksfraktur", authors: "Oestreich et al." }
     ];
 
     window.onload = () => {
-        renderUI();
-        loadFromLocalStorage(); // Daten wiederherstellen
-        if (!localStorage.getItem('guideSeen')) { openModal('guideModal'); }
+        renderPosters();
+        restoreFromLocal();
+        if (!localStorage.getItem('guideSeen')) openModal('guideModal');
     };
 
-    function renderUI() {
+    function renderPosters() {
         const container = document.getElementById('mainContainer');
-        container.innerHTML = '';
-        
         posterData.forEach((p, pIdx) => {
             const item = document.createElement('div');
             item.className = 'poster-item';
             item.id = `poster-item-${pIdx}`;
             item.innerHTML = `
                 <div class="poster-header" onclick="togglePoster(${pIdx})">
-                    <div class="poster-title-area">
-                        <span><strong>${p.id}</strong>: ${p.title}</span>
-                    </div>
-                    <div class="author-info-btn" onclick="event.stopPropagation(); toggleEl('author-bubble-${pIdx}')">👤</div>
+                    <div style="flex:1"><strong>${p.id}</strong>: ${p.title}</div>
+                    <div onclick="event.stopPropagation(); toggleEl('author-${pIdx}')" style="margin-left:10px">👤</div>
                 </div>
-                <div id="author-bubble-${pIdx}" class="author-bubble">${p.authors}</div>
-                <div class="poster-content" id
+                <div id="author-${pIdx}" class="author-bubble">${p.authors}</div>
+                <div class="poster-content">
+                    ${[0,1,2].map(c => `
+                        <div class="crit-row">
+                            <span>${["Exzellenz", "Struktur", "Relevanz"][c]}</span>
+                            <select class="score-sel" data-p="${pIdx}" data-c="${c}" onchange="saveAllToLocal()">
+                                <option value="">-</option>
+                                <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
+                            </select>
+                        </div>
+                    `).join('')}
+                    <button class="btn-save-local" id="btn-save-${pIdx}" onclick="markAsDone(${pIdx})">Übernehmen</button>
+                </div>`;
+            container.appendChild(item);
+        });
+    }
+
+    // --- LOCAL STORAGE LOGIK ---
+    function saveAllToLocal() {
+        const ratings = {};
+        document.querySelectorAll('.score-sel').forEach(s => {
+            if(s.value) {
+                if(!ratings[s.dataset.p]) ratings[s.dataset.p] = {};
+                ratings[s.dataset.p][s.dataset.c] = s.value;
+            }
+        });
+        const doneList = [];
+        document.querySelectorAll('.poster-item.done').forEach(el => doneList.push(el.id));
+
+        const backup = {
+            name: document.getElementById('jurorName').value,
+            ratings: ratings,
+            doneList: doneList
+        };
+        localStorage.setItem('dgfb_backup', JSON.stringify(backup));
+    }
+
+    function restoreFromLocal() {
+        const data = JSON.parse(localStorage.getItem('dgfb_backup'));
+        if(!data) return;
+
+        if(data.name) document.getElementById('jurorName').value = data.name;
+        
+        for(let pIdx in data.ratings) {
+            for(let cIdx in data.ratings[pIdx]) {
+                const sel = document.querySelector(`.score-sel[data-p="${pIdx}"][data-c="${cIdx}"]`);
+                if(sel) sel.value = data.ratings[pIdx][cIdx];
+            }
+        }
+
+        if(data.doneList) {
+            data.doneList.forEach(id => {
+                const el = document.getElementById(id);
+                if(el) {
+                    el.classList.add('done');
+                    const btn = el.querySelector('.btn-save-local');
+                    if(btn) { btn.innerHTML = "✓ Gespeichert"; btn.style.background = "var(--success)"; }
+                }
+            });
+        }
+    }
+
+    function markAsDone(idx) {
+        const selects = document.querySelectorAll(`.score-sel[data-p="${idx}"]`);
+        let allFilled = true;
+        selects.forEach(s => { if(!s.value) allFilled = false; });
+        if(!allFilled) { alert("Bitte alle Kriterien bewerten!"); return; }
+
+        const item = document.getElementById(`poster-item-${idx}`);
+        item.classList.add('done');
+        item.classList.remove('active');
+        const btn = document.getElementById(`btn-save-${idx}`);
+        btn.innerHTML = "✓ Gespeichert";
+        btn.style.background = "var(--success)";
+        
+        saveAllToLocal();
+    }
+
+    // --- CLOUD LOGIK ---
+    async function finalCloudUpload() {
+        const name = document.getElementById('jurorName').value.trim();
+        if(!name) { alert("Bitte Namen oben eingeben!"); return; }
+        
+        const backup = JSON.parse(localStorage.getItem('dgfb_backup'));
+        if(!backup || Object.keys(backup.ratings).length === 0) { alert("Keine Bewertungen zum Speichern gefunden!"); return; }
+
+        try {
+            await db.ref('results/' + jurorUID).set({
+                juror_name: name,
+                ratings: backup.ratings,
+                last_update: new Date().toISOString()
+            });
+            alert("Erfolgreich in der Cloud gespeichert!");
+        } catch (e) {
+            alert("Fehler: " + e.message);
+        }
+    }
+
+    // --- HELFER ---
+    function togglePoster(idx) {
+        const item = document.getElementById(`poster-item-${idx}`);
+        const isActive = item.classList.contains('active');
+        document.querySelectorAll('.poster-item').forEach(el => el.classList.remove('active'));
+        if (!isActive) item.classList.add('active');
+    }
+    function toggleEl(id) { 
+        const el = document.getElementById(id); 
+        el.style.display = (el.style.display === 'block') ? 'none' : 'block'; 
+    }
+    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; localStorage.setItem('guideSeen', 'true'); }
+    function toggleAdmin() { if(prompt("Passwort:") === "admin123") document.getElementById('adminArea').style.display = 'block'; }
+</script>
+</body>
+</html>
